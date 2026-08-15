@@ -82,12 +82,13 @@ YouTube Digest 需要你的 **Supadata API Key** 来获取 YouTube 字幕，还�
 
 在侧边栏中打开 **Settings**。你也可以在 `chrome://extensions` 的 YouTube Digest 卡片中打开扩展选项。Key 只能粘贴到这些设置输入框中。不要把 Key 发送到 AI 对话、项目文件、截图或公开消息中。
 
-发布版本支持 DeepSeek、OpenAI（ChatGPT）和 Google Gemini 三种 AI 服务，默认配置如下：
+发布版本支持 DeepSeek、OpenAI（ChatGPT）和 Google Gemini 三种 AI 服务，默认配置如下。此外还有第四个 **Custom（自定义）** 选项，可接入任何兼容 OpenAI 协议的服务：填写 Base URL、模型名和 API 密钥即可（例如 Moonshot/Kimi、通义千问 DashScope、智谱 GLM 或本地 Ollama）：
 
 ```text
 DeepSeek  Base URL: https://api.deepseek.com        Model: deepseek-v4-flash
 OpenAI    Base URL: https://api.openai.com/v1       Model: gpt-4o
 Gemini    Base URL: https://generativelanguage.googleapis.com/v1beta  Model: gemini-2.0-flash
+Custom    Base URL: （自行填写）                      Model: （自行填写）
 ```
 
 DeepSeek 请求会使用非思考模式，以获得更快、更稳定的交互。DeepSeek 专用的请求字段只用于 DeepSeek，各服务的专属规则单独处理，互不影响。如果想为本地副本更换模型，请在设置中复制安全的自定义 prompt，让编程 Agent 修改你自己的本地副本。不要把任何 API Key 放进 prompt 或对话。
@@ -112,7 +113,7 @@ API Key 和设置保存在你设备上的 Chrome 扩展本地存储中。发布�
 - Supadata 能够返回的原生字幕。YouTube Digest 会优先请求英文字幕，也可能显示其他可用的原生语言。
 - 原文、简体中文和双语对照字幕。
 - AI 概览、选中文本讲解、翻译、对话和自动润色笔记。
-- 多模型支持：发布版本支持 DeepSeek、OpenAI（ChatGPT）和 Google Gemini 三种 AI 服务，各自在设置中配置 API Key 和模型。
+- 多模型支持：发布版本支持 DeepSeek、OpenAI（ChatGPT）和 Google Gemini 三种 AI 服务，各自在设置中配置 API Key 和模型；另有 Custom（自定义）选项，可接入任何兼容 OpenAI 协议的服务（Base URL + 模型名 + API Key）。
 - 本地笔记、本地对话，以及最近字幕、概览和翻译的本地缓存。
 - 一键导出 Markdown 总结，以及基于章节的思维导图视图。
 - Safari 以兼容模式运行，详见“浏览器支持”。

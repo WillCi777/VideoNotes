@@ -52,6 +52,9 @@
     const openaiModelInput = doc.getElementById("openaiModel");
     const geminiApiKeyInput = doc.getElementById("geminiApiKey");
     const geminiModelInput = doc.getElementById("geminiModel");
+    const customApiKeyInput = doc.getElementById("customApiKey");
+    const customBaseUrlInput = doc.getElementById("customBaseUrl");
+    const customModelInput = doc.getElementById("customModel");
     const supadataApiKeyInput = doc.getElementById("supadataApiKey");
     const customizationPrompt = doc.getElementById("customizationPrompt");
     const copyCustomizationPromptBtn = doc.getElementById(
@@ -146,6 +149,9 @@
         openaiModelInput.value = settings.openaiModel;
         geminiApiKeyInput.value = settings.geminiApiKey;
         geminiModelInput.value = settings.geminiModel;
+        customApiKeyInput.value = settings.customApiKey;
+        customBaseUrlInput.value = settings.customBaseUrl;
+        customModelInput.value = settings.customModel;
         supadataApiKeyInput.value = settings.supadataApiKey;
         applyProvider(settings.provider);
         if (migration.migrated) {
@@ -178,6 +184,9 @@
         openaiModel: openaiModelInput.value,
         geminiApiKey: geminiApiKeyInput.value,
         geminiModel: geminiModelInput.value,
+        customApiKey: customApiKeyInput.value,
+        customBaseUrl: customBaseUrlInput.value,
+        customModel: customModelInput.value,
         supadataApiKey: supadataApiKeyInput.value,
       });
 
@@ -189,6 +198,10 @@
         // The active provider's key is required; reuse the DeepSeek message
         // copy as a generic prompt to open Settings.
         setStatus(saveStatus, "addDeepseekKey");
+        return;
+      }
+      if (currentProvider === "custom" && !settings.customBaseUrl) {
+        setStatus(saveStatus, "addCustomBaseUrl");
         return;
       }
 

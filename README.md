@@ -82,12 +82,13 @@ See the [official DeepSeek API documentation](https://api-docs.deepseek.com/) fo
 
 Open **Settings** from the side panel. You can also open the YouTube Digest **Options** page from its card at `chrome://extensions` or by right-clicking its toolbar icon. Paste keys only into these Settings fields. Never paste a key into an AI chat, repository file, screenshot, or public message.
 
-The published version supports DeepSeek, OpenAI (ChatGPT), and Google Gemini as AI providers, with the defaults below:
+The published version supports DeepSeek, OpenAI (ChatGPT), and Google Gemini as AI providers, with the defaults below. A fourth **Custom** option accepts any OpenAI-compatible endpoint: paste a Base URL, model name, and API key (for example Moonshot/Kimi, Qwen via DashScope, Zhipu GLM, or a local Ollama server):
 
 ```text
 DeepSeek  Base URL: https://api.deepseek.com        Model: deepseek-v4-flash
 OpenAI    Base URL: https://api.openai.com/v1       Model: gpt-4o
 Gemini    Base URL: https://generativelanguage.googleapis.com/v1beta  Model: gemini-2.0-flash
+Custom    Base URL: (your own)                      Model: (your own)
 ```
 
 DeepSeek requests are sent in non-thinking mode for responsive, predictable interactions. DeepSeek-only request fields stay isolated to DeepSeek, and each provider's rules are handled separately so one provider does not affect another. To use a different model for your local copy, copy the safe customization prompt in Settings and give it to a coding agent. Never add an API key to that prompt or chat.

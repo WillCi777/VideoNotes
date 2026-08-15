@@ -106,6 +106,14 @@
             >
               Gemini
             </button>
+            <button
+              class="provider-option"
+              type="button"
+              data-provider="custom"
+              aria-pressed="false"
+            >
+              Custom
+            </button>
           </div>
 
           <!-- DeepSeek -->
@@ -224,6 +232,51 @@
                 data-i18n="geminiLink"
                 >Create a Gemini API key</a
               ><span data-i18n="geminiHelpSuffix">.</span>
+            </p>
+          </div>
+
+          <!-- Custom OpenAI-compatible endpoint -->
+          <div
+            class="provider-fields"
+            data-provider-fields="custom"
+            style="display: none"
+          >
+            <label for="customBaseUrl" data-i18n="customBaseUrlLabel"
+              >Base URL</label
+            >
+            <input
+              id="customBaseUrl"
+              name="customBaseUrl"
+              type="text"
+              autocomplete="off"
+              spellcheck="false"
+              placeholder="https://api.example.com/v1"
+            />
+            <label for="customModel" data-i18n="modelLabel">Model</label>
+            <input
+              id="customModel"
+              name="customModel"
+              type="text"
+              autocomplete="off"
+              spellcheck="false"
+              placeholder="model-name"
+            />
+            <label for="customApiKey" data-i18n="customApiKeyLabel"
+              >Custom API key</label
+            >
+            <input
+              id="customApiKey"
+              name="customApiKey"
+              type="password"
+              autocomplete="off"
+              spellcheck="false"
+              placeholder="Paste your API key"
+            />
+            <p class="help" data-i18n-html="customHelp">
+              Any OpenAI-compatible endpoint works here: the extension calls
+              <code>/chat/completions</code> on your Base URL with your model
+              and key. Examples: DeepSeek, Moonshot (Kimi), Qwen (DashScope),
+              Zhipu GLM, or a local Ollama server.
             </p>
           </div>
 

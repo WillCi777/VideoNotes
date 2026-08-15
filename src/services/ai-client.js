@@ -46,6 +46,16 @@ function providerInfo(settings = {}) {
       baseUrl: "https://generativelanguage.googleapis.com/v1beta",
     };
   }
+  if (provider === "custom") {
+    // Any OpenAI-compatible endpoint: user-supplied base URL, model, and key.
+    return {
+      provider,
+      name: "Custom",
+      apiKey: settings.customApiKey || "",
+      model: settings.customModel || "",
+      baseUrl: String(settings.customBaseUrl || "").replace(/\/+$/, ""),
+    };
+  }
   return {
     provider: "deepseek",
     name: "DeepSeek",
@@ -127,6 +137,13 @@ async function requestAiCompletion({
       `${info.name} API key not configured. Open YouTube Digest Settings.`,
     );
     error.code = "NO_AI_KEY";
+    throw error;
+  }
+  if (info.provider === "custom" && !info.baseUrl) {
+    const error = new Error(
+      "Custom provider Base URL not configured. Open YouTube Digest Settings.",
+    );
+    error.code = "NO_AI_BASE_URL";
     throw error;
   }
 

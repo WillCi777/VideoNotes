@@ -44,6 +44,10 @@
         "Used for overviews, explanations, translation, chat, and note polishing through the Gemini API. ",
       geminiLink: "Create a Gemini API key",
       geminiHelpSuffix: ".",
+      customBaseUrlLabel: "Base URL",
+      customApiKeyLabel: "Custom API key",
+      customHelp:
+        "Any OpenAI-compatible endpoint works here: the extension calls <code>/chat/completions</code> on your Base URL with your model and key. Examples: DeepSeek, Moonshot (Kimi), Qwen (DashScope), Zhipu GLM, or a local Ollama server.",
       privacyNote:
         "When you use AI features, the selected provider receives the video transcript and relevant video context. Review its terms and pricing before saving.",
       saveSettings: "Save settings",
@@ -79,6 +83,7 @@
       saving: "Saving…",
       addSupadataKey: "Add a Supadata API key.",
       addDeepseekKey: "Add a DeepSeek API key.",
+      addCustomBaseUrl: "Add a Base URL for the Custom provider.",
       saved: "Saved. Reopen YouTube Digest to use these settings.",
       saveFailed: "Could not save settings. Please try again.",
       copying: "Copying…",
@@ -125,6 +130,10 @@
         "通过 Gemini API 提供概览、讲解、翻译、对话和笔记润色。",
       geminiLink: "创建 Gemini API 密钥",
       geminiHelpSuffix: "。",
+      customBaseUrlLabel: "Base URL",
+      customApiKeyLabel: "自定义 API 密钥",
+      customHelp:
+        "任何兼容 OpenAI 协议的服务都可以在这里使用：扩展会向你的 Base URL 发送 <code>/chat/completions</code> 请求，并使用你填写的模型和密钥。例如 DeepSeek、Moonshot（Kimi）、通义千问（DashScope）、智谱 GLM 或本地 Ollama 服务。",
       privacyNote:
         "使用 AI 功能时，所选服务会收到视频字幕及相关视频上下文。保存前请查看该服务的条款和价格。",
       saveSettings: "保存设置",
@@ -159,6 +168,7 @@
       saving: "正在保存…",
       addSupadataKey: "请添加 Supadata API 密钥。",
       addDeepseekKey: "请添加 DeepSeek API 密钥。",
+      addCustomBaseUrl: "请为自定义服务填写 Base URL。",
       saved: "已保存。请重新打开 YouTube Digest 以使用这些设置。",
       saveFailed: "无法保存设置，请重试。",
       copying: "正在复制…",

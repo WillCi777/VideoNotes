@@ -84,6 +84,49 @@ test("active-provider accessors resolve the selected provider", () => {
   assert.equal(settings.activeAiModel(settings.normalize({})), "deepseek-v4-flash");
 });
 
+test("Custom provider keeps its own base URL, model, and key", () => {
+  const custom = settings.normalize({
+    provider: "custom",
+    customBaseUrl: " https://api.moonshot.cn/v1/ ",
+    customModel: "moonshot-v1-8k",
+    customApiKey: " sk-custom  ",
+  });
+  assert.equal(custom.provider, "custom");
+  assert.equal(custom.customBaseUrl, "https://api.moonshot.cn/v1"); // trailing slash stripped
+  assert.equal(custom.customModel, "moonshot-v1-8k");
+  assert.equal(custom.customApiKey, "sk-custom");
+  assert.equal(settings.activeAiKey(custom), "sk-custom");
+  assert.equal(settings.activeAiModel(custom), "moonshot-v1-8k");
+  assert.equal(settings.activeAiBaseUrl(custom), "https://api.moonshot.cn/v1");
+
+  // A custom config saved by the options page always carries all three
+  // fields; an empty Base URL means it is not yet usable.
+  const emptyCustom = settings.normalize({
+    provider: "custom",
+    customBaseUrl: "",
+    customApiKey: "",
+    customModel: "",
+  });
+  assert.equal(emptyCustom.provider, "custom");
+  assert.equal(settings.activeAiBaseUrl(emptyCustom), "");
+});
+
+test("legacy custom configs without a customBaseUrl are still migrated", () => {
+  const legacy = settings.normalize({
+    provider: "custom",
+    aiApiKey: "old-key",
+    aiBaseUrl: "https://api.example.com/v1",
+    aiModel: "example-model",
+  });
+  assert.equal(settings.isLegacyCustom(legacy), false); // already normalized
+  const rawLegacy = { provider: "custom", aiApiKey: "old-key" };
+  assert.equal(settings.isLegacyCustom(rawLegacy), true);
+  const migrated = settings.migrateLegacyCustom(rawLegacy);
+  assert.equal(migrated.migrated, true);
+  assert.equal(migrated.settings.provider, "deepseek");
+  assert.equal(migrated.settings.aiApiKey, "");
+});
+
 test("legacy custom migration clears only the AI key and is idempotent", () => {
   const legacy = {
     provider: "custom",

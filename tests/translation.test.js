@@ -749,3 +749,56 @@ test("chat message handler wires the study-assistant prompt and returns the repl
   assert.match(requests[0].messages[0].content, /Test Video/);
   assert.equal(requests[0].messages.length, 4); // system + 3 history
 });
+
+test("Custom provider calls the user-supplied OpenAI-compatible endpoint", async () => {
+  const requests = [];
+  const helpers = loadBackgroundHelpers({
+    settings: {
+      provider: "custom",
+      customApiKey: "ck-key",
+      customBaseUrl: "https://api.moonshot.cn/v1/",
+      customModel: "moonshot-v1-8k",
+    },
+    fetchImpl: async (url, options) => {
+      requests.push({ url, body: JSON.parse(options.body) });
+      return {
+        ok: true,
+        json: async () => ({
+          choices: [{ message: { content: "custom reply" } }],
+        }),
+      };
+    },
+  });
+
+  const result = await helpers.callAiTranslation("Translate.", "Hello.");
+  assert.equal(result.success, true);
+  assert.equal(result.text, "custom reply");
+  assert.equal(requests.length, 1);
+  // Trailing slash on the base URL is stripped before /chat/completions.
+  assert.match(
+    requests[0].url,
+    /^https:\/\/api\.moonshot\.cn\/v1\/chat\/completions$/,
+  );
+  assert.equal(requests[0].body.model, "moonshot-v1-8k");
+  assert.equal(requests[0].body.messages[0].role, "system");
+  assert.equal(Object.hasOwn(requests[0].body, "thinking"), false);
+});
+
+test("Custom provider without a Base URL fails with a clear error", async () => {
+  const helpers = loadBackgroundHelpers({
+    settings: {
+      provider: "custom",
+      customApiKey: "ck-key",
+      customBaseUrl: "",
+      customModel: "model",
+    },
+    fetchImpl: async () => {
+      throw new Error("fetch must not be called");
+    },
+  });
+
+  const result = await helpers.callAiTranslation("Translate.", "Hello.");
+  assert.equal(result.success, false);
+  assert.equal(result.code, "NO_AI_BASE_URL");
+  assert.match(result.error, /Base URL not configured/);
+});
