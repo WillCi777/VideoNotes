@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>YouTube Digest</title>
+    <link rel="stylesheet" href="sidepanel.css" />
+  </head>
+  <body>
+    <!-- HEADER -->
+    <!-- Note: the panel's own "YouTube Digest" title is shown by Chrome's side-panel
+         title bar, so we don't repeat a logo here. -->
+    <div class="header">
+      <div class="header-top">
+        <!-- Video info -->
+        <div class="video-info" id="videoInfo" style="display: none">
+          <div class="video-title" id="videoTitle"></div>
+          <div class="video-channel" id="videoChannel"></div>
+        </div>
+        <button
+          class="settings-btn"
+          id="settingsBtn"
+          type="button"
+          title="Open YouTube Digest settings"
+          aria-label="Open YouTube Digest settings"
+        >
+          Settings
+        </button>
+      </div>
+
+      <!-- Tab navigation -->
+      <div class="tabs" id="tabsNav" style="display: none">
+        <button class="tab active" data-tab="transcript">Transcript</button>
+        <button class="tab" data-tab="overview">Overview</button>
+        <button class="tab" data-tab="notes">Notes</button>
+        <button class="tab" data-tab="chat">Chat</button>
+      </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="content" id="contentArea">
+      <!-- WELCOME STATE -->
+      <div id="welcomeState" class="welcome-container">
+        <div class="welcome-icon">&#9655;</div>
+        <div class="welcome-title">Ready to Digest</div>
+        <div class="welcome-desc">
+          Navigate to a YouTube video and click the extension icon to get an
+          AI-powered digest.
+        </div>
+      </div>
+
+      <!-- LOADING STATE -->
+      <div id="loadingState" style="display: none">
+        <div class="loading-container">
+          <div class="loading-bar"></div>
+          <div class="loading-text" id="loadingText">Fetching transcript</div>
+          <div class="loading-subtext" id="loadingSubtext">
+            Extracting captions from video...
+          </div>
+        </div>
+      </div>
+
+      <!-- ERROR STATE -->
+      <div id="errorState" style="display: none">
+        <div class="error-container">
+          <div class="error-icon">&#9888;</div>
+          <div class="error-title" id="errorTitle">Error</div>
+          <div class="error-message" id="errorMessage">
+            Something went wrong.
+          </div>
+          <button class="error-btn" id="errorBtn">Try Again</button>
+        </div>
+      </div>
+
+      <!-- RESULTS -->
+      <div id="resultsState" style="display: none">
+        <!-- TAB: Transcript (default - no LLM required) -->
+        <div class="tab-panel active" data-panel="transcript">
+          <div class="section">
+            <div class="section-header transcript-section-header">
+              <div class="transcript-header-main">
+                <div class="section-title-wrap">
+                  <div class="section-title">Full Transcript</div>
+                </div>
+                <div
+                  class="transcript-mode-control"
+                  id="transcriptModeControl"
+                  role="group"
+                  aria-label="Transcript language"
+                >
+                  <button
+                    class="transcript-mode-btn active"
+                    type="button"
+                    data-transcript-mode="original"
+                    aria-pressed="true"
+                  >Original</button>
+                  <button
+                    class="transcript-mode-btn"
+                    type="button"
+                    data-transcript-mode="zh"
+                    aria-pressed="false"
+                  >中文</button>
+                  <button
+                    class="transcript-mode-btn"
+                    type="button"
+                    data-transcript-mode="bilingual"
+                    aria-pressed="false"
+                  >双语</button>
+                  <span
+                    class="translation-spinner"
+                    id="langSpinner"
+                    aria-label="Translating"
+                  ></span>
+                </div>
+              </div>
+              <div class="transcript-actions">
+                <button class="enhance-btn" id="copyTranscriptBtn">Copy</button>
+                <button class="enhance-btn" id="exportTranscriptBtn">
+                  Export
+                </button>
+              </div>
+            </div>
+            <div id="transcriptList"></div>
+          </div>
+        </div>
+
+        <!-- TAB: Overview (chapters + key quotes) - requires LLM -->
+        <div class="tab-panel" data-panel="overview">
+          <!-- Chapters -->
+          <div class="section">
+            <div class="section-header">
+              <div class="section-title">Chapters</div>
+              <div class="summary-actions">
+                <button
+                  class="enhance-btn"
+                  id="exportMarkdownBtn"
+                  type="button"
+                  title="Export this digest as a Markdown summary"
+                >
+                  📄 Markdown
+                </button>
+                <button
+                  class="enhance-btn"
+                  id="mindmapBtn"
+                  type="button"
+                  title="View the chapters as a mindmap"
+                >
+                  🧭 思维导图
+                </button>
+              </div>
+            </div>
+            <ul class="chapter-list" id="chapterList">
+              <li
+                class="chapter-item"
+                style="
+                  color: var(--text-muted);
+                  cursor: default;
+                  border-color: var(--border);
+                "
+              >
+                Chapters will appear here
+              </li>
+            </ul>
+          </div>
+
+          <!-- Key Quotes -->
+          <div class="section">
+            <div class="section-title">Key Quotes</div>
+            <div id="quotesList">
+              <div
+                class="quote-item"
+                style="
+                  color: var(--text-muted);
+                  border-left-color: var(--border);
+                  cursor: default;
+                "
+              >
+                <div class="quote-text" style="font-style: normal">
+                  Quotes will be extracted when you view this tab...
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB: Notes -->
+        <div class="tab-panel" data-panel="notes">
+          <div class="section">
+            <div class="section-header">
+              <div class="section-title">Saved Notes</div>
+              <div class="notes-filter">
+                <button
+                  class="enhance-btn active"
+                  id="notesFilterThis"
+                  aria-pressed="true"
+                >
+                  This Video
+                </button>
+                <button
+                  class="enhance-btn"
+                  id="notesFilterAll"
+                  aria-pressed="false"
+                >
+                  All Notes
+                </button>
+              </div>
+            </div>
+            <p class="notes-intro" id="notesIntro">
+              Move your mouse over the video and click the 📝 Note button to
+              save timestamped notes, or press the "n" key while the video is
+              focused.
+            </p>
+            <div id="notesList"></div>
+          </div>
+        </div>
+
+        <!-- TAB: Chat (conversations with the active AI provider) -->
+        <div class="tab-panel" data-panel="chat">
+          <div class="section chat-section">
+            <div class="chat-layout">
+              <div class="chat-sidebar">
+                <button class="chat-new-btn" id="newChatBtn" type="button">
+                  + 新对话
+                </button>
+                <div class="chat-list" id="chatList"></div>
+              </div>
+              <div class="chat-main">
+                <div class="chat-messages" id="chatMessages">
+                  <div class="chat-empty">
+                    Ask questions about this video or about the transcript.
+                  </div>
+                </div>
+                <div class="chat-input-row">
+                  <textarea
+                    id="chatInput"
+                    rows="2"
+                    placeholder="输入问题，Enter 发送，Shift+Enter 换行"
+                  ></textarea>
+                  <button class="chat-send-btn" id="chatSendBtn" type="button">
+                    发送
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Auto-scroll follow button — appears when user scrolls away from playback position -->
+    <button
+      class="follow-playback-btn"
+      id="followPlaybackBtn"
+      style="display: none"
+    >
+      Follow playback
+    </button>
+
+    <!-- Layer assembler: settings + core + platform + panel modules, then the entry -->
+    <script src="settings.js"></script>
+    <script src="src/core/debug.js"></script>
+    <script src="src/core/urls.js"></script>
+    <script src="src/core/transcript.js"></script>
+    <script src="src/core/markup.js"></script>
+    <script src="src/core/translation-validation.js"></script>
+    <script src="src/core/chat-data.js"></script>
+    <script src="src/core/summary.js"></script>
+    <script src="src/platform/browser.js"></script>
+    <script src="src/platform/messaging.js"></script>
+    <script src="src/panel/state.js"></script>
+    <script src="src/panel/utils.js"></script>
+    <script src="src/panel/video.js"></script>
+    <script src="src/panel/cache.js"></script>
+    <script src="src/panel/views.js"></script>
+    <script src="src/panel/notes.js"></script>
+    <script src="src/panel/translation.js"></script>
+    <script src="src/panel/playback.js"></script>
+    <script src="src/panel/explain.js"></script>
+    <script src="src/panel/digest.js"></script>
+    <script src="src/panel/chat.js"></script>
+    <script src="src/panel/summary.js"></script>
+    <script src="src/panel/main.js"></script>
+    <script src="sidepanel.js"></script>
+  </body>
+</html>
