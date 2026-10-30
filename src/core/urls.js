@@ -9,7 +9,7 @@ function extractVideoId(url) {
     const urlObj = new URL(url);
 
     if (
-      urlObj.hostname.includes("youtube.com") &&
+      ["youtube.com", "www.youtube.com"].includes(urlObj.hostname) &&
       urlObj.searchParams.has("v")
     ) {
       return urlObj.searchParams.get("v");
@@ -19,7 +19,7 @@ function extractVideoId(url) {
       return urlObj.pathname.slice(1);
     }
 
-    if (urlObj.pathname.startsWith("/embed/")) {
+    if (["youtube.com", "www.youtube.com"].includes(urlObj.hostname) && urlObj.pathname.startsWith("/embed/")) {
       return urlObj.pathname.split("/")[2];
     }
 

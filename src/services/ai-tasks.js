@@ -30,7 +30,7 @@ async function handleAnalyzeTranscript(
 ) {
   try {
     const settings = await getSettings();
-    if (!settings.aiApiKey) {
+    if (!providerInfo(settings).apiKey) {
       return {
         success: false,
         error: "NO_AI_KEY",
@@ -104,6 +104,7 @@ async function handleAnalyzeTranscript(
     // Treat every model response as untrusted data. Rebuild the supported
     // schema and derive display timestamps from validated numeric seconds.
     analysis = validateAndFixTimestamps(analysis, maxTimestampSeconds);
+    if (!analysis.chapters.length) throw new Error("AI 未返回有效章节，请重试。旧结果不会被空结果覆盖。");
 
     return {
       success: true,
@@ -149,7 +150,7 @@ async function cleanupNoteText(
   videoTitle,
 ) {
   const settings = await getSettings();
-  if (!settings.aiApiKey) {
+  if (!providerInfo(settings).apiKey) {
     return [beforeText, targetText, afterText].filter(Boolean).join(" ");
   }
 
@@ -236,7 +237,7 @@ async function handleExplainSelection(
 ) {
   try {
     const settings = await getSettings();
-    if (!settings.aiApiKey) {
+    if (!providerInfo(settings).apiKey) {
       return {
         success: false,
         error: "NO_AI_KEY",
@@ -338,7 +339,7 @@ async function handleTranslateContent(
     }
 
     const settings = await getSettings();
-    if (!settings.aiApiKey) {
+    if (!providerInfo(settings).apiKey) {
       return { success: false, error: "DeepSeek API key not configured" };
     }
 

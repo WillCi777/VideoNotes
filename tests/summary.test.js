@@ -66,3 +66,24 @@ test("buildOutlineMarkdown emits an XMind-compatible heading hierarchy", () => {
   assert.match(outline, /^## 0:00 Introduction$/m);
   assert.match(outline, /^### Greets the audience and sets the agenda\.$/m);
 });
+
+
+test("Markdown retains detailed operating steps on separate lines", () => {
+  const text = buildMarkdownSummary({ title: "教程", chapters: [{ title: "采样率", timestamp: "1:00", summary: "核心任务：录音\n操作步骤：\n1. 打开设置\n2. 设置为 48000 Hz\n关键提醒：需回看画面" }] });
+  assert.match(text, /核心任务：录音\n   操作步骤：\n   1\. 打开设置\n   2\. 设置为 48000 Hz/);
+});
+
+test('Markdown guide separates outcomes and uncertainties from actual steps', () => {
+  const text = buildMarkdownSummary({title:'环境配置',guide:{goal:'创建工作区',takeaways:['方法不绑定工具','代码和规格需要版本管理'],outcome:'项目已建立；未确认完成初始提交',uncertainties:['编码代理名称转写不一致']},chapters:[],keyQuotes:[]});
+  assert.match(text,/## 本节目标\n\n创建工作区/);
+  assert.match(text,/## 核心要点\n\n- 方法不绑定工具/);
+  assert.match(text,/## 完成状态\n\n项目已建立；未确认完成初始提交/);
+  assert.match(text,/## 需要核实\n\n- 编码代理名称转写不一致/);
+});
+
+test('Markdown distinguishes inferred reusable workflow from example-only choices', () => {
+  const text = buildMarkdownSummary({title:'项目章程',guide:{workflow:['提供背景与约束','审查并接受代理推断'],exampleChoices:['本例采用 SQLite，服务快速原型']},chapters:[]});
+  assert.match(text,/## 可复用流程（根据字幕归纳）\n\n1\. 提供背景与约束\n2\. 审查并接受代理推断/);
+  assert.match(text,/## 本例选择与适用条件\n\n- 本例采用 SQLite/);
+  assert.doesNotMatch(text,/## 完成状态/);
+});

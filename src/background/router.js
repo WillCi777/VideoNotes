@@ -6,6 +6,35 @@
  * All heavy lifting lives in the SERVICES layer; this file only dispatches.
  */
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.action === "videoDiscussion") {
+    if (sender.id !== chrome.runtime.id || !sender.url?.startsWith(chrome.runtime.getURL(""))) {
+      sendResponse({ success: false, error: "Untrusted caller" }); return false;
+    }
+    handleVideoDiscussion(message).then(sendResponse).catch(error => sendResponse({success:false,error:error.message}));
+    return true;
+  }
+  if (message.action === "localSaveQuote") {
+    if (sender.id !== chrome.runtime.id || !sender.url?.startsWith(chrome.runtime.getURL(""))) {
+      sendResponse({ success: false, error: "Untrusted caller" }); return false;
+    }
+    (async () => {
+      if (typeof message.videoId !== "string" || message.videoId.length > 120 || typeof message.text !== "string" || !message.text.trim() || message.text.length > 10000) throw new Error("Invalid note");
+      const seconds = Math.max(0, Math.floor(Number(message.timestamp) || 0));
+      const note = { id: `note_${crypto.randomUUID()}`, videoId: message.videoId, videoTitle: String(message.videoTitle || "").slice(0,500), channelName: String(message.channelName || "").slice(0,300),
+        timestamp: message.timed === false ? "" : `${Math.floor(seconds/60)}:${String(seconds%60).padStart(2,"0")}`, timestampSeconds: seconds,
+        timestampedUrl: message.url ? LocalVideo.timestampUrl(message.url, seconds) : "", text: message.text, createdAt: Date.now() };
+      await saveNoteToStorage(note); return { success: true, note };
+    })().then(sendResponse).catch(error => sendResponse({ success: false, error: error.message }));
+    return true;
+  }
+  if (message.action === "localFetchTranscript") {
+    if (sender.id !== chrome.runtime.id || !sender.url?.startsWith(chrome.runtime.getURL(""))) {
+      sendResponse({ success: false, error: "Untrusted caller" });
+      return false;
+    }
+    handleLocalTranscript(message.url).then(sendResponse).catch(error => sendResponse({ success: false, error: error.message }));
+    return true;
+  }
   // We need to return true to indicate we'll respond asynchronously
   if (message.action === "fetchTranscript") {
     handleFetchTranscript(message.videoId)
@@ -116,56 +145,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
 
   if (message.action === "openSidePanel") {
-    const tabId = sender.tab?.id;
-    debugLog("[YouTube Digest BG] openSidePanel requested from tab:", tabId);
-
-    // Chrome/Edge: re-enable the panel (it may have been disabled by
-    // auto-close) and open it. IMPORTANT: ytdOpenSidePanel calls setOptions +
-    // open synchronously (no await between them) to preserve the user gesture
-    // context. Safari: no sidePanel API, so open the panel page in a tab.
-    if (tabId) {
-      const opened = ytdOpenSidePanel(tabId);
-      if (opened) {
-        // Broadcast to side panel to start digest (in case it's already open)
-        setTimeout(() => {
-          chrome.runtime.sendMessage({ action: "startDigestFromButton" }).catch(
-            () => {},
-          );
-        }, 300);
-      } else {
-        ytdOpenSidePanelFallback()
-          .then(() => {
-            setTimeout(() => {
-              chrome.runtime.sendMessage({ action: "startDigestFromButton" }).catch(
-                () => {},
-              );
-            }, 700);
-          })
-          .catch((err) => {
-            console.error("[YouTube Digest BG] openSidePanel fallback error:", err);
-          });
-      }
-    } else {
-      // Fallback: find the active tab
-      chrome.tabs
-        .query({ active: true, lastFocusedWindow: true })
-        .then((tabs) => {
-          if (tabs[0]) {
-            const opened = ytdOpenSidePanel(tabs[0].id);
-            if (!opened) {
-              ytdOpenSidePanelFallback().catch((err) => {
-                console.error(
-                  "[YouTube Digest BG] openSidePanel fallback error:",
-                  err,
-                );
-              });
-            }
-          }
-        });
-    }
-
-    sendResponse({ success: true });
-    return false;
+    ytdOpenReader(sender.tab?.url, true)
+      .then(() => sendResponse({ success: true }))
+      .catch(error => sendResponse({ success: false, error: error.message }));
+    return true;
   }
 
   // Relay messages from side panel to content script

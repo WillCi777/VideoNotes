@@ -1,5 +1,8 @@
 # Security Policy
 
+Local adaptation: this version also contacts Bilibili API/subtitle CDN hosts, OpenAI, Gemini, and permitted user-configured HTTPS AI endpoints. See manifest.json, PRIVACY.md and LOCAL-README.md for current scope. API keys are local credentials; never include them in reports. Bilibili requests use a protocol checksum (WBI), not an authorization bypass.
+
+
 ## Supported versions
 
 YouTube Digest is a small GitHub-only project. Security fixes are made on the latest code on `main` and, when releases are published, the latest GitHub release. Older snapshots are not supported.
@@ -25,12 +28,12 @@ There is no guaranteed response time or bug-bounty program. Please allow a reaso
 Examples include:
 
 - API keys or private content included in source, logs, screenshots, or release ZIPs;
-- requests to network origins outside the documented YouTube, Supadata, and DeepSeek hosts;
+- requests to network origins outside the hosts declared in the manifest and current privacy policy;
 - script or HTML injection through transcript, metadata, service errors, or model output;
-- access to browsing data outside the documented YouTube scope;
+- access to browsing data outside the documented video and reader scope;
 - unintended transmission of notes, transcripts, or credentials;
 - a dependency or release-workflow compromise; and
-- bypasses of local data deletion or DeepSeek configuration controls.
+- bypasses of local data deletion or AI provider configuration controls.
 
 ## User security guidance
 

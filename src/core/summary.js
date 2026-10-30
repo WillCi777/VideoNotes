@@ -18,7 +18,7 @@ function cleanLine(text) {
 /**
  * Markdown summary: metadata header + chapters + key quotes.
  */
-function buildMarkdownSummary({ title, channelName, description, videoUrl, chapters, keyQuotes }) {
+function buildMarkdownSummary({ title, channelName, description, videoUrl, guide, chapters, keyQuotes }) {
   const lines = [];
   lines.push(`# ${cleanLine(title) || "Untitled Video"}`);
   lines.push("");
@@ -32,6 +32,20 @@ function buildMarkdownSummary({ title, channelName, description, videoUrl, chapt
   }
 
   lines.push("");
+  if (guide) {
+    const section = (heading, text, values, ordered = false) => {
+      if (!text && !values?.length) return;
+      lines.push(`## ${heading}`, "");
+      if (text) lines.push(cleanLine(text), "");
+      if (Array.isArray(values)) { values.forEach((value, index) => lines.push(`${ordered ? `${index + 1}.` : "-"} ${cleanLine(value)}`)); lines.push(""); }
+    };
+    section("本节目标", guide.goal);
+    section("核心要点", "", guide.takeaways);
+    section("可复用流程（根据字幕归纳）", "", guide.workflow, true);
+    section("本例选择与适用条件", "", guide.exampleChoices);
+    section("完成状态", guide.outcome);
+    section("需要核实", "", guide.uncertainties);
+  }
   lines.push("## 章节 / Chapters");
   lines.push("");
   const chapterList = Array.isArray(chapters) ? chapters : [];
@@ -42,8 +56,8 @@ function buildMarkdownSummary({ title, channelName, description, videoUrl, chapt
       const stamp = chapter.timestamp || "";
       const title = cleanLine(chapter.title) || `Chapter ${index + 1}`;
       lines.push(`${index + 1}. **[${stamp}] ${title}**`);
-      const summary = cleanLine(chapter.summary);
-      if (summary) lines.push(`   - ${summary}`);
+      const summary = String(chapter.summary || "").trim();
+      if (summary) summary.split(/\r?\n/).filter(line => line.trim()).forEach(line => lines.push(`   ${line.trim()}`));
     });
   }
 

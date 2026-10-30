@@ -155,6 +155,10 @@ async function requestAiCompletion({
     responseFormat,
   });
 
+  const endpoint = new URL(url);
+  if (endpoint.protocol !== "https:" || endpoint.username || endpoint.password) {
+    throw new Error("AI 服务必须使用不含账号密码的 HTTPS 地址。");
+  }
   const controller = new AbortController();
   let timeoutKind = "";
   let idleTimeoutId;

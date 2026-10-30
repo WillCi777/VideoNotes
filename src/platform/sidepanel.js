@@ -15,6 +15,16 @@
  * Returns true when the native side panel was opened, false when the host
  * lacks the API (callers should use the tab fallback).
  */
+async function ytdOpenReader(input, start = false) {
+  const url = new URL(ytdBrowserApi().runtime.getURL("sidepanel.html"));
+  url.searchParams.set("view", "page");
+  try {
+    const video = LocalVideo.parse(input);
+    url.hash = new URLSearchParams({ [start ? "video" : "source"]: video.url }).toString();
+  } catch { /* Other active pages open an empty link input. */ }
+  return ytdBrowserApi().tabs.create({ url: url.href });
+}
+
 function ytdOpenSidePanel(tabId) {
   if (!ytdSupportsSidePanel()) return false;
   const api = ytdBrowserApi();
@@ -45,7 +55,7 @@ function ytdSetPanelForTab(tabId, url) {
   const isYouTube = (url || "").startsWith("https://www.youtube.com");
   // setOptions can reject if the tab just closed — ignore that harmlessly.
   ytdBrowserApi()
-    .sidePanel.setOptions({ tabId, path: "sidepanel.html", enabled: isYouTube })
+    .sidePanel.setOptions({ tabId, path: "sidepanel.html", enabled: true })
     .catch(() => {});
 }
 

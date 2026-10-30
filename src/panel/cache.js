@@ -23,6 +23,12 @@ async function saveToCache(videoId) {
     }
 
     const cacheData = {
+      videoUrl: currentVideoUrl || "",
+      videoDuration: currentVideoDuration,
+      videoDescription: currentVideoDescription,
+      source: localSourceLabel,
+      timed: localTimed,
+      discussion: currentDiscussion,
       analysis: currentAnalysis, // May be null if not yet analyzed
       transcript: currentTranscript,
       transcriptText: currentTranscriptText,
@@ -34,6 +40,15 @@ async function saveToCache(videoId) {
       timestamp: Date.now(),
     };
 
+    const all = await chrome.storage.local.get(null);
+    const existing = Object.entries(all).filter(([key]) => key.startsWith("digest_") && key !== `digest_${videoId}`).sort((a,b) => b[1].timestamp-a[1].timestamp);
+    let bytes = new TextEncoder().encode(JSON.stringify(cacheData)).length;
+    const remove = [];
+    for (let i = 0; i < existing.length; i++) {
+      bytes += new TextEncoder().encode(JSON.stringify(existing[i][1])).length;
+      if (i >= 19 || bytes > 6*1024*1024) remove.push(existing[i][0]);
+    }
+    if (remove.length) await chrome.storage.local.remove(remove);
     await chrome.storage.local.set({ [`digest_${videoId}`]: cacheData });
     debugLog(
       "Saved to cache:",
@@ -43,8 +58,10 @@ async function saveToCache(videoId) {
 
     // Evict old entries if we have more than 20 videos cached
     await evictOldCacheEntries(20);
+    return true;
   } catch (error) {
     console.error("Cache save error:", error);
+    return false;
   }
 }
 

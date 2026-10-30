@@ -10,6 +10,36 @@
  * Shows chapters and key quotes only.
  */
 function renderAnalysisResults(analysis) {
+  // A compact guide separates the actual scope, priorities, outcome and ambiguity.
+  let guideEl = document.getElementById("analysisGuide");
+  if (!guideEl) {
+    guideEl = document.createElement("section");
+    guideEl.id = "analysisGuide";
+    guideEl.className = "analysis-guide section";
+    const chaptersSection = document.getElementById("chapterList").closest(".section");
+    chaptersSection.before(guideEl);
+  }
+  guideEl.replaceChildren();
+  const guide = analysis.guide;
+  guideEl.hidden = !guide;
+  if (guide) {
+    const add = (title, text, items, ordered = false) => {
+      if (!text && !items?.length) return;
+      const heading = document.createElement("h3"); heading.textContent = title; guideEl.append(heading);
+      if (text) { const p = document.createElement("p"); p.textContent = text; guideEl.append(p); }
+      if (items?.length) {
+        const ul = document.createElement(ordered ? "ol" : "ul");
+        items.forEach(value => { const li = document.createElement("li"); li.textContent = value; ul.append(li); });
+        guideEl.append(ul);
+      }
+    };
+    add("本节目标", guide.goal);
+    add("核心要点", "", guide.takeaways);
+    add("可复用流程（根据字幕归纳）", "", guide.workflow, true);
+    add("本例选择与适用条件", "", guide.exampleChoices);
+    add("完成状态", guide.outcome);
+    add("需要核实", "", guide.uncertainties);
+  }
   // Chapters
   const chapterList = document.getElementById("chapterList");
   chapterList.innerHTML = "";
@@ -118,7 +148,7 @@ function renderTranscript() {
   const badge = document.createElement("div");
   badge.id = "transcriptSourceBadge";
   badge.className = "transcript-source-badge";
-  badge.innerHTML = `<span class="source-dot source-dot--subs"></span> From video subtitles · ${escapeHtml(getOriginalTranscriptLabel())}`;
+  badge.innerHTML = `<span class="source-dot source-dot--subs"></span> ${escapeHtml(localSourceLabel)} · ${escapeHtml(getOriginalTranscriptLabel())}`;
   transcriptList.parentElement.insertBefore(badge, transcriptList);
 
   // Group entries using smart sentence-boundary + time-guardrail logic
@@ -134,7 +164,7 @@ function renderTranscript() {
     const timestamp = `${minutes}:${String(seconds).padStart(2, "0")}`;
 
     div.innerHTML = `
-      <span class="transcript-time">${timestamp}</span>
+      <span class="transcript-time">${typeof localTimed !== "undefined" && !localTimed ? "" : timestamp}</span>
       <span class="transcript-text">${renderSubtitleInlineMarkup(group.text)}</span>
     `;
 
@@ -181,7 +211,7 @@ function renderTranscriptModeRows(segments, mode) {
     mode === "bilingual"
       ? `${originalLabel} + 简体中文`
       : `简体中文 · translated from ${originalLabel}`;
-  badge.innerHTML = `<span class="source-dot source-dot--subs"></span> From video subtitles · ${modeLabel}`;
+  badge.innerHTML = `<span class="source-dot source-dot--subs"></span> ${escapeHtml(localSourceLabel)} · ${modeLabel}`;
   transcriptList.parentElement.insertBefore(badge, transcriptList);
 
   const rows = [];
@@ -199,7 +229,7 @@ function renderTranscriptModeRows(segments, mode) {
     const seconds = Math.floor(segment.start % 60);
     const timestamp = `${minutes}:${String(seconds).padStart(2, "0")}`;
     div.innerHTML = `
-      <span class="transcript-time">${timestamp}</span>
+      <span class="transcript-time">${typeof localTimed !== "undefined" && !localTimed ? "" : timestamp}</span>
       ${renderTranscriptSegmentContent(segment, mode, cached, "")}
     `;
     div.addEventListener("click", (event) =>
@@ -312,7 +342,7 @@ function copyTranscript() {
 
 function exportTranscript() {
   const transcriptContent = currentTranscriptText || "";
-  const videoUrl = `https://youtube.com/watch?v=${currentVideoId}`;
+  const videoUrl = currentVideoUrl || "";
 
   let exportText = "";
   exportText += `TRANSCRIPT\n`;

@@ -9,7 +9,7 @@
 
 function summaryVideoUrl() {
   return currentVideoId
-    ? `https://youtube.com/watch?v=${currentVideoId}`
+    ? (currentVideoUrl || "")
     : "";
 }
 
@@ -29,6 +29,7 @@ function summaryMeta() {
     channelName: currentChannelName,
     description: currentVideoDescription,
     videoUrl: summaryVideoUrl(),
+    guide: currentAnalysis?.guide,
     chapters: currentAnalysis?.chapters || [],
     keyQuotes: currentAnalysis?.keyQuotes || [],
   };

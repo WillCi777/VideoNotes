@@ -41,7 +41,7 @@ function validateAndFixTimestamps(analysis, maxSeconds) {
       if (seconds === null || !title) return null;
       return {
         title,
-        summary: safeString(chapter?.summary, 1500),
+        summary: safeString(chapter?.summary, 6000),
         timestampSeconds: seconds,
         timestamp: formatTimestamp(seconds),
       };
@@ -73,5 +73,18 @@ function validateAndFixTimestamps(analysis, maxSeconds) {
     .filter((seconds) => seconds !== null)
     .slice(0, 100);
 
-  return { chapters, keyQuotes, keyMoments };
+  const result = { chapters, keyQuotes, keyMoments };
+  if (analysis?.guide && typeof analysis.guide === "object" && !Array.isArray(analysis.guide)) {
+    const list = (value, count) => (Array.isArray(value) ? value : [])
+      .slice(0, count).map(item => safeString(item, 1000)).filter(Boolean);
+    result.guide = {
+      goal: safeString(analysis.guide.goal, 1000),
+      takeaways: list(analysis.guide.takeaways, 5),
+      workflow: list(analysis.guide.workflow, 8),
+      exampleChoices: list(analysis.guide.exampleChoices, 6),
+      outcome: safeString(analysis.guide.outcome, 1500),
+      uncertainties: list(analysis.guide.uncertainties, 8),
+    };
+  }
+  return result;
 }

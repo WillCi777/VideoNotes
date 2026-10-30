@@ -1,88 +1,25 @@
 # Privacy
 
-Effective: July 28, 2026
+Effective: October 30, 2026. This policy describes this local PC adaptation.
 
-YouTube Digest is a GitHub-only, bring-your-own-key Chrome extension. It has no YouTube Digest account, developer-operated backend, analytics, advertising, or telemetry.
+There is no developer-operated backend, telemetry or account service in this extension. Data is stored in Chrome local extension storage, which is not an encrypted password vault.
 
-## Data the extension handles
+## External processing
 
-Depending on the feature you use, YouTube Digest handles:
+- Bilibili URLs are normalized to BV ID and part number. The extension contacts api.bilibili.com for video metadata, WBI request parameters and subtitle tracks. Existing browser login cookies may be included only in those API requests. It does not export or ask users to paste cookies. Subtitle files are fetched without credentials from the explicitly permitted aisubtitle.hdslb.com or i0.hdslb.com hosts. Redirects are rejected.
+- YouTube canonical URLs and the user's Supadata API key are sent to api.supadata.ai for native subtitles. No audio transcription is requested.
+- The selected AI provider receives transcript text and relevant video metadata for summaries; selected text and context for explanations; requested text for translations; recent conversation messages, current notes and the full transcript or selected excerpts for video discussion and revision; and note context when the original YouTube note-polishing path is used. Providers include DeepSeek, OpenAI and Google Gemini. A custom HTTPS endpoint receives its own configured key and submitted content, subject to Chrome host permissions. The developer does not proxy these calls.
+- Imported files are read locally. Their text is sent to the selected AI provider when the user selects import and summarize. No file/audio upload service is included.
+- These services may charge for usage and retain content under their own policies. Clearing local data does not delete their retained data.
 
-- the canonical URL and video ID of the active YouTube video;
-- transcript text and timestamps;
-- video metadata such as title, channel, description, and duration;
-- text you select in the transcript and nearby transcript context;
-- transcript context around a timestamped note;
-- content you ask to translate;
-- notes you save;
-- Supadata and DeepSeek configuration, including API keys; and
-- cached transcript, digest, and translation results.
+## Local retention and deletion
 
-## Where data goes
+Settings and API keys remain until reset or extension removal. Transcript and summary history is limited to 20 entries, expires after 30 days when loaded or cleaned, and has an approximate 6 MiB cache budget. Saved notes are capped at 100, with oldest entries removed on insertion. Chats are capped at 50 conversations; message size and count within those conversations can still consume browser storage. Users may export summaries before cache eviction.
 
-### Supadata
+Each video history entry also contains up to 40 discussion messages, a pending revision and at most one previous note version. Requests include the last 12 messages (up to 4000 characters each), current notes and full subtitles up to 80000 characters; longer chat sources use explicitly disclosed excerpts, and full revision is refused. Each history row can be deleted. Clear history removes transcript/summary entries including their discussions, pending revisions and previous versions; API settings, legacy separate notes and legacy chats remain. Delete notes/chats in their respective interfaces. Use the Settings reset-all action or remove the extension to remove all local extension data. Revoking API keys is handled by the provider.
 
-YouTube Digest sends the canonical YouTube video URL to `https://api.supadata.ai` with your Supadata API key. Supadata returns the transcript and timestamps. A Supadata key is required for transcript retrieval.
+## Browser permissions
 
-### DeepSeek
+The action opens a local extension reader tab; legacy sidePanel permission remains for compatibility; storage persists local data; tabs finds the active page and matching video tabs; scripting controls the Bilibili HTML video player on a matching video page and reads YouTube player metadata. Host permissions are limited to the listed video, subtitle and AI domains in manifest.json. The side panel is available on other pages for link input; it does not inject content scripts there. YouTube retains its original content script controls. There is no cookies, downloads or general all-sites host permission.
 
-The published version sends AI feature content to DeepSeek V4 Flash at `https://api.deepseek.com`:
-
-- transcript plus relevant title, channel, description, or duration for an overview;
-- selected text plus nearby transcript context for an explanation;
-- small semantic transcript batches currently needed for progressive Chinese
-  translation, or requested overview or explanation content;
-- nearby transcript context and video metadata when polishing a saved note.
-
-The endpoint and `deepseek-v4-flash` model are fixed in the published Settings page. You provide one DeepSeek API key. To use another provider or model, you must adapt your own local source copy and its permissions. The Settings page provides a coding-agent prompt for that purpose and warns you never to include an API key in the prompt or chat.
-
-Requests go directly from the extension to Supadata or DeepSeek. They are authenticated with the keys you supply. YouTube Digest's developer does not proxy or receive these requests.
-
-Those services process data under their own terms, privacy policies, retention practices, and account settings. Do not send confidential, personal, or regulated content unless their terms and your obligations permit it.
-
-## Local storage and retention
-
-YouTube Digest uses Chrome's local extension storage, not a YouTube Digest cloud service.
-
-- Supadata and DeepSeek settings and API keys remain on the device in Chrome's extension storage.
-- Saved notes remain until you delete them or remove/clear the extension's data. The extension keeps up to 100 notes.
-- Recent transcript, digest, and per-segment translation cache entries are stored
-  locally. The cache is limited to 20 videos, and entries older than 30 days are
-  removed when the side panel opens.
-
-Chrome extension storage is not a password vault. Anyone with sufficient access to your browser profile or device may be able to recover locally stored keys or content. Use scoped keys where providers support them, set spending limits, and rotate or revoke a key if the device or browser profile is compromised.
-
-To remove data:
-
-- delete individual saved notes in YouTube Digest;
-- use the Options page to clear cached digests, delete all notes, or reset all extension data;
-- remove the extension or clear its stored data from Chrome to delete all local settings, keys, notes, and cache entries; and
-- revoke keys in the Supadata or DeepSeek dashboard to stop their future use.
-
-Clearing local data does not delete information already processed or retained by Supadata or DeepSeek. Use each service's controls for service-side requests.
-
-## Permissions
-
-YouTube Digest uses Chrome permissions for these purposes:
-
-- `sidePanel`: display the YouTube Digest interface beside YouTube.
-- `storage`: store settings, keys, notes, and cached results locally.
-- `tabs`: identify and interact with the active YouTube tab.
-- `scripting`: coordinate the extension's YouTube page controls.
-- YouTube host access: read the active video's URL and metadata and provide timestamp controls.
-- Supadata host access: retrieve transcripts.
-- DeepSeek host access: provide AI overviews, explanations, translation, and note polishing through DeepSeek V4 Flash.
-
-YouTube Digest does not use these permissions to monitor general browsing activity.
-
-## No sale or advertising use
-
-YouTube Digest does not sell personal information, build advertising profiles, or share data with data brokers. It does not include analytics SDKs.
-
-## Changes
-
-Privacy-relevant changes will be documented in this file and in the repository history. Review updates before installing a new version.
-
-## Questions
-
-This repository does not provide a public support or issue channel. Review this policy, the source code, and each provider's documentation before using the extension. For a vulnerability or accidental secret exposure, follow the private process in [SECURITY.md](SECURITY.md).
+Reader URLs include a local record identifier and, when relevant, the canonical video URL. They may be bookmarked in the browser; imported transcript text and API keys are never placed in the URL. Existing cached records restore without a model call. Legacy notes and chat tabs remain hidden. A video-specific discussion panel is available in the reader; a response does not change notes until a revision is explicitly applied. Jobs require the reader tab to remain open. There is no mobile access, cloud synchronization, audio transcription or visual video analysis.

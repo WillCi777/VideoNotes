@@ -39,6 +39,8 @@ async function handleFetchTranscript(videoId) {
     // Make the API request
     const response = await fetch(apiUrl.toString(), {
       method: "GET",
+      signal: AbortSignal.timeout(20000),
+      redirect: "error",
       headers: {
         "x-api-key": settings.supadataApiKey,
       },
@@ -170,6 +172,8 @@ async function pollTranscriptJob(jobId, supadataApiKey) {
       `https://api.supadata.ai/v1/transcript/${encodeURIComponent(jobId)}`,
       {
         headers: { "x-api-key": supadataApiKey },
+        signal: AbortSignal.timeout(20000),
+        redirect: "error",
       },
     );
 

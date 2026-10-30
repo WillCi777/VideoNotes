@@ -1,254 +1,95 @@
-# YouTube Digest
+# YouTube Digest 本地增强版
 
-[English](README.md) | [简体中文](README.zh-CN.md)
+在电脑上把 B站或 YouTube 视频变成可阅读、可追问、可修订的学习笔记。
 
-Turn every YouTube video into a resource for deep learning. YouTube Digest brings transcripts, bilingual translation, AI overviews, explanations, and timestamped notes into one Chrome side panel, so you can study ideas and language without losing your place.
+这是基于 YouTube Digest 的本地 Chrome 扩展增强版。点击扩展打开完整阅读页，粘贴链接或导入字幕，生成紧扣主题的笔记；右侧可以结合字幕继续讨论，预览并应用修订稿。
 
-- Turn captions into a readable, searchable learning resource.
-- Learn languages with the original transcript, a Simplified Chinese translation, or an aligned bilingual view.
-- Build understanding with an AI overview, chapters, key quotes, and selected-text explanations.
-- Navigate long videos by clicking timestamps in the transcript, overview, or notes.
-- Save polished timestamped notes for later study.
-- Keep control of your data with your own API keys, local Chrome storage, and no analytics or telemetry.
+[English](README.en.md) · [完整使用说明](LOCAL-README.md) · [隐私与数据流](PRIVACY.md) · [更新记录](CHANGELOG.md)
 
-YouTube Digest is a bring-your-own-key project installed locally from GitHub. It is not available through the Chrome Web Store, does not include API credits, and does not run a developer-operated server.
+## 功能
 
-## Install with your coding agent
+- **视频链接**：支持 B站普通 BV 视频及分 P、YouTube 普通视频。
+- **字幕导入**：支持 SRT、VTT、TXT 和粘贴文字；没有字幕时可使用此入口。
+- **主题笔记**：本节目标、核心要点、可复用流程、示例选择、完成状态与待核实信息；操作类内容保留步骤和参数。
+- **讨论与完善**：结合当前字幕和笔记交流，引用有效时间戳；生成修订稿后手动应用，可恢复上一版。
+- **本地阅读与历史**：完整标签页阅读，结果地址可收藏，已有记录刷新恢复；导出 Markdown、文字稿和思维导图大纲。
+- **自带 API Key**：支持 DeepSeek、OpenAI 和 Google Gemini。没有项目运营方服务器，也没有随项目提供的免费 AI 额度。
 
-You do not need to understand the code or use the command line. Send this message to your coding agent:
+## 安装：无需编程环境
 
-> Download or clone this project into a permanent folder I choose, tell me its exact full path, and use that same folder for Chrome's Load unpacked step. If I need a suggestion during this first installation, offer `~/Documents/youtube-digest` on macOS or Linux, or `%USERPROFILE%\Documents\youtube-digest` on Windows, but do not assume either path. Walk me through installation and setup in simple terms. https://github.com/bty2403/youtube-digest-Next
+需要桌面版 Chrome 116 或更新版本。当前通过“加载已解压的扩展程序”安装，尚未上架 Chrome 应用商店。
 
-Your agent should:
+1. 在本仓库的 **Releases** 页面下载 `youtube-digest-v2.0.0.zip`（发布后可用），解压到准备长期保留的文件夹。也可点击 **Code → Download ZIP** 下载源码并解压。
+2. 打开 `chrome://extensions`，开启右上角“开发者模式”。
+3. 点击“加载已解压的扩展程序”，选择包含 `manifest.json` 的文件夹。不要选择 `src` 或 `dist`。
+4. 点击扩展图标打开阅读页，再点击 **Settings**，选择 AI 服务、填写自己的 API Key 并保存。
+5. 粘贴视频完整链接，点击“生成总结”。B站不需要 Supadata Key；YouTube 还需要自己的 Supadata Key。
 
-1. Ask where you want to keep the project, download or clone it there, and tell you the exact full path. If you want a suggestion, it can offer `~/Documents/youtube-digest` on macOS or Linux, or `%USERPROFILE%\Documents\youtube-digest` on Windows.
-2. Open the official Supadata and DeepSeek pages below and help you create your own accounts.
-3. Walk you through selecting the exact project folder you chose in Chrome with **Load unpacked**.
-4. Show you where to enter your API keys in the extension's **Settings** page.
-5. Open a YouTube video with captions and confirm the transcript and translation work.
+**不要移动或删除已加载的文件夹。** 升级时用新版文件更新同一目录，在扩展管理页点击“重新加载”，再刷新阅读页。保留同一安装目录有助于继续使用同一扩展身份；不要先卸载，卸载可能清除本地记录。重要内容请先导出。
 
-Keep this folder in the same place after installation. If you move or delete it, Chrome's unpacked extension stops working until you load the extension again from its new permanent folder.
+## 获取密钥
 
-Never paste an API key into an AI chat, source file, screenshot, or public message. Enter keys yourself, directly in the YouTube Digest Settings page. Your coding agent can point to the correct field without seeing the key.
+密钥只在扩展 Settings 中输入，不要发到聊天、Issue、截图或源码中。
 
-## Install manually
+| 服务 | 用途 | 官方入口 |
+| --- | --- | --- |
+| DeepSeek | 总结、翻译、讨论、修订 | [API Keys](https://platform.deepseek.com/api_keys) |
+| OpenAI | 总结、翻译、讨论、修订 | [API Keys](https://platform.openai.com/api-keys) |
+| Gemini | 总结、翻译、讨论、修订 | [Google AI Studio](https://aistudio.google.com/app/apikey) |
+| Supadata | 仅 YouTube 原生字幕获取 | [控制台](https://dash.supadata.ai/) |
 
-If you prefer to do it yourself:
+选择一个 AI 服务即可，模型名可在设置允许的字段中配置。API 使用通常单独计费，订阅聊天产品不代表拥有对应 API 额度；具体价格、模型可用性及额度以服务商账户为准。本项目不承诺固定价格或免费配额。
 
-1. Open [github.com/btu2403/youtube-digest-Next](https://github.com/bty2403/youtube-digest-Next).
-2. Choose **Code**, then **Download ZIP**.
-3. Choose a permanent folder and unzip the project there. Optional suggestions are `~/Documents/youtube-digest` on macOS or Linux, or `%USERPROFILE%\Documents\youtube-digest` on Windows. You may use a different folder.
-4. In Chrome, open `chrome://extensions`.
-5. Turn on **Developer mode**.
-6. Click **Load unpacked**.
-7. Select the exact project folder you chose, which must contain `manifest.json`.
-8. Pin YouTube Digest from Chrome's Extensions menu if you want quick access.
+Custom 支持 HTTPS 的兼容接口，但仍需要浏览器主机访问权限；本版没有任意域名授权界面，也不支持 HTTP 本机模型。普通使用者建议先选内置服务。
 
-Because this is an unpacked extension, it does not update automatically. After downloading an update or changing local files, click **Reload** on the YouTube Digest card at `chrome://extensions`, then refresh open YouTube tabs. Moving or deleting the source folder breaks the unpacked extension until you load it again from the new location.
+## 使用流程
 
-## Set up your API keys
+1. 粘贴完整视频链接，或点击“读取当前页面”后生成。
+2. 在正文阅读主题笔记与完整文字稿。点击有效时间戳，跳转到对应视频位置。
+3. 不满意时点击“重新提取细节”，或在右侧“讨论与完善”中说明修改要求。
+4. 点击“生成修订稿”查看预览；点击“应用到笔记”才替换正文，必要时“恢复上一版笔记”。
+5. 在 Markdown 按钮导出需要长期保存或分享的笔记。
 
-YouTube Digest needs a **Supadata API key** to retrieve YouTube transcripts, plus an API key for one AI provider of your choice:
+普通对话不会自动修改笔记。重新提取细节会清除待应用的修订稿和上一版恢复点。处理时保持阅读页打开。
 
-1. A **Supadata API key** to retrieve YouTube transcripts.
-2. An AI provider key: **DeepSeek**, **OpenAI (ChatGPT)**, or **Google Gemini**, chosen in Settings. Each provider has its own key field and model field.
+## 本地保存不等于完全离线
 
-### Get a Supadata API key
+- 密钥、历史、字幕和对话存放在本机浏览器扩展存储中，不是加密密码库。
+- B站字幕请求访问 B站 API 和允许的字幕 CDN；可能使用浏览器已有的 B站登录状态，不要求导出 Cookie。
+- YouTube 规范化链接发给 Supadata；AI 功能会把文字及必要上下文发给选中的模型服务，可能产生费用。
+- 历史最多 20 条，30 天过期，缓存预算约 6 MiB；超出预算可能提前清理旧记录。对话、修订稿和上一版随对应历史保存和清理。
+- 每个视频本地保留最多 40 条对话，AI 请求使用最近 12 条。长字幕问答使用片段时会明确提示；超长字幕不支持整篇修订，请先分段导入。
 
-1. Open the official [Supadata sign-up page](https://dash.supadata.ai/auth/sign-up).
-2. Create an account and complete the short onboarding flow.
-3. Supadata generates an API key automatically during onboarding.
-4. Open the [Supadata dashboard](https://dash.supadata.ai/) whenever you need to find or manage the key.
-5. Copy the key and paste it into **Supadata API key** in YouTube Digest Settings.
+详情见 [PRIVACY.md](PRIVACY.md)。
 
-See the [official Supadata documentation](https://docs.supadata.ai/) if the dashboard flow changes.
+## 支持范围与常见问题
 
-### Get a DeepSeek API key
+**获取不到 B站字幕？** 部分视频没有可获取字幕，或接口受登录、Cookie 策略和平台风控影响。可先登录 B站后重试，仍失败就导入字幕或粘贴文字。本项目不绕过访问控制。
 
-1. Open the official [DeepSeek API Keys page](https://platform.deepseek.com/api_keys).
-2. Sign in or create a DeepSeek Platform account when prompted.
-3. Choose **Create new API key**, give it a recognizable name such as `YouTube Digest`, and create it.
-4. Copy the key immediately. The full key may only be shown once.
-5. Paste it into **DeepSeek API key** in YouTube Digest Settings.
-6. If DeepSeek reports insufficient balance, add credit in your DeepSeek Platform account and try again.
+**手机、抖音、直播、番剧能用吗？** 当前不支持。B站分享短链请先在浏览器打开，复制 `bilibili.com/video/BV...` 完整地址；分 P 使用 `?p=2` 等参数。
 
-See the [official DeepSeek API documentation](https://api-docs.deepseek.com/) for current account and API details.
+**没有字幕能自动转写音频吗？** 当前不提供音频下载、语音转写或画面理解。画面中的操作若字幕没说清楚，AI 不能可靠补全。
 
-### Get an OpenAI or Gemini API key
+**AI 报错、文字太长或等待过久？** 检查密钥、模型名、余额和网络；长内容分段导入，重试时保留原记录。不同模型上下文限制不同，不能保证最大导入长度都可一次生成。
 
-1. OpenAI: create a key at the [OpenAI API keys page](https://platform.openai.com/api-keys), then paste it into **OpenAI API key** in Settings. The default model is `gpt-4o` and can be changed in the **Model** field.
-2. Gemini: create a key at the [Google AI Studio keys page](https://aistudio.google.com/app/apikey), then paste it into **Gemini API key** in Settings. The default model is `gemini-2.0-flash` and can be changed in the **Model** field.
-3. Switch providers with the picker at the top of the **AI provider** card in Settings, then save.
+**为什么没有出现新功能或新提取效果？** 更新代码后重新加载扩展并刷新阅读页。旧笔记不会自动重算，点击“重新提取细节”会重新调用 AI。
 
-Open **Settings** from the side panel. You can also open the YouTube Digest **Options** page from its card at `chrome://extensions` or by right-clicking its toolbar icon. Paste keys only into these Settings fields. Never paste a key into an AI chat, repository file, screenshot, or public message.
+## 开发与贡献
 
-The published version supports DeepSeek, OpenAI (ChatGPT), and Google Gemini as AI providers, with the defaults below. A fourth **Custom** option accepts any OpenAI-compatible endpoint: paste a Base URL, model name, and API key (for example Moonshot/Kimi, Qwen via DashScope, Zhipu GLM, or a local Ollama server):
+纯 HTML、CSS、JavaScript，没有构建步骤或 npm 运行依赖。安装扩展不需要 Node.js；开发检查建议 Node.js 22+，打包还需要 Bash、zip、unzip。
 
-```text
-DeepSeek  Base URL: https://api.deepseek.com        Model: deepseek-v4-flash
-OpenAI    Base URL: https://api.openai.com/v1       Model: gpt-4o
-Gemini    Base URL: https://generativelanguage.googleapis.com/v1beta  Model: gemini-2.0-flash
-Custom    Base URL: (your own)                      Model: (your own)
-```
-
-DeepSeek requests are sent in non-thinking mode for responsive, predictable interactions. DeepSeek-only request fields stay isolated to DeepSeek, and each provider's rules are handled separately so one provider does not affect another. To use a different model for your local copy, copy the safe customization prompt in Settings and give it to a coding agent. Never add an API key to that prompt or chat.
-
-Keys and settings are stored in Chrome's local extension storage on your device. Release builds do not include or use `config.js`.
-
-## Use YouTube Digest
-
-1. Open a standard YouTube watch page with captions.
-2. Click the YouTube Digest extension icon to open the side panel.
-3. Read the timestamped transcript, or choose **Original**, **中文**, or **双语**.
-4. Open **Overview** when you want AI-generated chapters and key quotes.
-5. Select transcript text when you want an AI explanation.
-6. Save a note from the player or a key quote, then revisit it from **Notes**.
-7. Open **Chat** to ask follow-up questions about the video with the selected AI provider; conversations are saved locally and can be deleted.
-8. In **Overview**, click **Markdown** to download a one-click summary, or **思维导图** to view the chapters as a mindmap (copy Mermaid source or download an outline).
-
-## What works today
-
-- Google Chrome 116 or newer and Microsoft Edge 114 or newer (both Chromium), using the Side Panel API.
-- Standard `youtube.com/watch` video pages.
-- Native subtitle tracks returned by Supadata. YouTube Digest prefers English when available, but may show another native language.
-- Original, Simplified Chinese, and aligned bilingual transcript views.
-- AI overviews, selected-text explanations, translation, chat, and automatic note polishing.
-- Multiple AI providers: the published version supports DeepSeek, OpenAI (ChatGPT), and Google Gemini as AI providers, each with its own API key and model in Settings.
-- Local notes, local conversations, and a local cache for recent transcript and digest results.
-- One-click Markdown summary export and a mindmap view built from the chapters.
-- Safari runs in a compatibility mode described under Browser support.
-
-Shorts, live streams, private or access-restricted videos, and videos without an available native transcript may not work. Firefox and mobile browsers are not currently tested or supported.
-
-YouTube Digest forces Supadata's `mode=native`. It does not request AI-generated transcripts or perform local audio transcription when native captions are unavailable.
-
-## Architecture
-
-YouTube Digest uses plain HTML, CSS, and JavaScript with no build step. The code is organized as four layers, and each layer is split into small modules that load in dependency order (see `background.js`, `sidepanel.html`, `options.html`, and `manifest.json`):
-
-1. **Core** (`src/core/`) - pure, framework-agnostic logic with no browser APIs: transcript segmentation, markup rendering, loose JSON parsing, timestamp validation, translation validation, chat data helpers, summary and mindmap generators, and URL helpers.
-2. **Platform** (`src/platform/`) - the browser abstraction layer. It resolves the `chrome`/`browser` namespace (Safari), guards Chrome-only APIs such as `storage.local.setAccessLevel`, wraps the Side Panel API with a tab fallback, and provides the message watchdog used by translation and chat.
-3. **Services** (`src/services/`) - the providers: prompt loading, the Supadata transcript client, the AI client (provider dispatch for DeepSeek/OpenAI/Gemini, idle/hard timeouts, bounded responses), and the AI product tasks (analysis, explanations, note cleanup, translation, chat).
-4. **Entry domains** - feature wiring per extension context: `src/background/` (message router, notes, side-panel scope, player video details), `src/content/` (Digest and Note buttons, page reading, playback control), `src/panel/` (side-panel state, views, digest pipeline, cache, translation queue, auto-scroll, explain, chat, summary/mindmap), and `src/options/` (i18n, storage adapter, provider selection, settings page).
-
-The entry files (`background.js`, `content.js`, `sidepanel.js`, `options.js`) contain no feature logic: they only assemble their layer in order. `settings.js` is the shared, non-secret configuration module (defaults and validation only).
-
-## Browser support
-
-- **Chrome and Edge (native):** the full experience, including the Side Panel API, `world: "MAIN"` player details, and trusted-context storage.
-- **Safari (compatibility mode):** Safari exposes the `browser` namespace but has no Side Panel API and no service-worker background, so the platform layer adapts at runtime. Use `manifest.safari.json` (background scripts instead of a service worker) when converting with Xcode. The panel opens as a regular tab, the player-details enrichment falls back to DOM scraping, and the storage access-level restriction is skipped. Everything else works the same.
-
-## Supadata free tier and request costs
-
-Current as of August 9, 2026, the [Supadata pricing page](https://supadata.ai/pricing) lists a free tier with **100 credits per month**, no credit card required. Unused credits do not roll over. Supadata pricing can change, so check the current page before relying on these numbers.
-
-The [Supadata transcript documentation](https://docs.supadata.ai/get-transcript) describes the transcript request modes and credit behavior:
-
-- A native transcript request uses **1 credit**, regardless of video duration.
-- A generated transcript costs **2 credits per video minute**. YouTube Digest does not use this path because it forces `mode=native`.
-- An unavailable native lookup returned as HTTP `206` still uses **1 credit**.
-
-With the current native-only behavior, the free tier can cover roughly 100 transcript lookups per month when each request succeeds once. Retries and unavailable-caption lookups also consume credits, so actual successful-video coverage can be lower.
-
-DeepSeek usage is separate from Supadata. DeepSeek may apply its own free quota, rate limits, or charges. YouTube Digest does not collect payments or resell access. Set spending limits and monitor both accounts. The estimate below explains the current DeepSeek translation cost.
-
-## DeepSeek V4 Flash translation cost estimate
-
-Current as of August 10, 2026, DeepSeek lists the following prices per 1 million tokens on its official [pricing page](https://api-docs.deepseek.com/quick_start/pricing/):
-
-- Cache-hit input: **$0.0028 USD**.
-- Cache-miss input: **$0.14 USD**.
-- Output: **$0.28 USD**.
-
-DeepSeek says these prices may increase soon, so check the current pricing page before relying on this estimate. Its official [token usage guide](https://api-docs.deepseek.com/quick_start/token_usage/) estimates about 0.3 token per English character and about 0.6 token per Chinese character. Its [context caching guide](https://api-docs.deepseek.com/guides/kv_cache/) explains the automatic best-effort disk cache used for repeated prefixes.
-
-A measured 20-minute English talk contained **2,935 spoken English words** and 15,433 transcript characters. With YouTube Digest's current grouping, it became 128 semantic segments and 43 requests of three segments each. Repeated prompts and JSON brought the rendered input to about 108,528 English characters, or **about 32,600 input tokens** using DeepSeek's 0.3 token per English character heuristic. The translated Chinese JSON output is estimated at about 3,500 to 4,500 tokens using the 0.6 token per Chinese character heuristic, plus JSON and ID overhead.
-
-If all input is billed as cache miss, input costs about $0.0046 and output costs about $0.0010 to $0.0013, for a total of about $0.0056 to $0.0059. When much of the repeated system prompt hits DeepSeek's automatic best-effort cache, a realistic lower end is about $0.002 to $0.003. A practical estimate for fully translating this talk is therefore **$0.002 to $0.006 USD, about ¥0.02 to ¥0.04**.
-
-Translation is lazy and progressive. Cached segments are reused, and only rows you request by scrolling into them incur calls. Retries, provider behavior, and pricing changes can increase the final cost.
-
-## Remix it with your coding agent
-
-This is a personal remix project. Upstream issues and pull requests are not accepted. If something breaks or you want a new feature, download or fork your own copy and ask your coding agent to fix, remix, or personalize it for you.
-
-YouTube Digest uses plain HTML, CSS, and JavaScript with no build step, so it is a friendly starting point for agent-assisted projects. Ideas to try:
-
-- Add more translation languages and let each person choose a learning language.
-- Create customized summary templates for lectures, interviews, tutorials, reviews, or research talks.
-- Build a vocabulary notebook that saves a word, its sentence, meaning, and video timestamp.
-- Export notes and vocabulary to Markdown, CSV, Anki, or another study tool.
-- Add personal topic filters that highlight the chapters most relevant to a goal.
-- Add optional local-model support for a different privacy and cost tradeoff.
-- Improve accessibility with keyboard navigation, font controls, and higher-contrast themes.
-
-Ask your agent to preserve the bring-your-own-key model, keep secrets out of source files, run the checks below, and test the remix on real videos.
-
-If you want another AI provider or model, first open the exact YouTube Digest project folder that Chrome loaded through **Load unpacked** in your coding agent. Then open YouTube Digest Settings and use **Copy customization prompt**. Replace the `[PROVIDER]` and `[MODEL]` placeholders before sending it. Do not include any API key in the prompt or chat. After the agent updates your local copy, enter the key yourself in the Settings field it identifies.
-
-## Privacy and data flow
-
-YouTube Digest makes provider requests directly from the extension:
-
-1. It sends a canonical YouTube watch URL to Supadata to request the native transcript.
-2. It sends the transcript and relevant video metadata to DeepSeek when you request AI features.
-3. Focused features send only the content they need, such as selected text with context or small transcript batches for translation.
-4. It stores keys, settings, notes, and recent cache entries locally in Chrome.
-
-There is no YouTube Digest account system, advertising, analytics, or telemetry. Supadata and DeepSeek still receive data under their own terms and privacy policies. See [PRIVACY.md](PRIVACY.md) for details.
-
-## Troubleshooting
-
-### The Digest button is missing on a YouTube video
-
-- At `chrome://extensions`, find YouTube Digest and click **Reload**, then refresh the YouTube tab.
-- Confirm that you are on a standard `https://www.youtube.com/watch?...` page, not a Short, embed, or live page.
-- The current version automatically follows YouTube when its responsive action bar changes. Wait a moment after the page finishes loading.
-- If you have an older downloaded copy, resizing the YouTube window horizontally once may reveal the button. Then download the latest version so resizing is no longer required.
-- If it is still missing, ask your coding agent to inspect the content script on that exact video page.
-
-### The side panel does not open
-
-- Confirm that you are on a standard `https://www.youtube.com/watch?...` page.
-- At `chrome://extensions`, confirm YouTube Digest is enabled and click **Reload**.
-- Refresh the YouTube tab after reloading the extension.
-- Ask your coding agent to inspect the extension if the problem continues.
-
-### YouTube Digest asks for setup
-
-- Open **Settings** and save both a Supadata key and a DeepSeek key.
-- This published version uses the fixed DeepSeek V4 Flash endpoint and model. There are no Base URL or Model fields to configure.
-- If Settings says a legacy custom provider was removed, enter a DeepSeek key. The old AI key was cleared so it could not be reused with the wrong service.
-
-### No transcript is found
-
-- Confirm the video is public and has native captions.
-- Check your Supadata key, remaining credits, rate limit, and account status.
-- Remember that unavailable native lookups and manual retries may still consume credits.
-
-YouTube Digest will not fall back to generated transcription.
-
-### AI requests fail
-
-- A `401` or `403` usually means the DeepSeek key or account access is invalid.
-- A `429` usually means a DeepSeek rate or spending limit was reached.
-- Confirm the key was created in the DeepSeek Platform account linked above and that the account has available credit.
-- If you adapted a local copy for another model, use the Settings customization prompt again and ask your coding agent to inspect that local implementation.
-
-Never share API keys, private transcripts, or personal notes in chats, screenshots, or logs.
-
-## Checks for coding agents
-
-Ask your coding agent to run these commands after changing the project:
-
-```bash
+```sh
 npm test
 npm run check
 npm run package
 ```
 
-The agent should also reload the unpacked extension in Chrome and test several real YouTube videos. Automated checks do not prove that live provider requests and YouTube interactions work.
+安装 ZIP 输出在 `dist/`；打包采用文件白名单，不包含 `.git`、测试文件、密钥配置或个人历史。测试包含模拟服务和浏览器场景，不代表所有平台、账号、模型均已实测。
 
-## License
+参见 [开发架构](docs/ARCHITECTURE.md)、[贡献指南](CONTRIBUTING.md) 和 [安全报告](SECURITY.md)。
 
-MIT. See [LICENSE](LICENSE).
+## 来源与许可
+
+基于 [WillCi777/youtube-digest-Next](https://github.com/WillCi777/youtube-digest-Next)，上游 README 同时引用 [bty2403/youtube-digest-Next](https://github.com/bty2403/youtube-digest-Next)。本版保留上游 Git 来源及 MIT 版权声明，新增 B站适配、本地阅读、详细提取与视频专属讨论修订。
+
+采用 [MIT License](LICENSE)。本项目非 B站、YouTube 或各模型服务商的官方产品。分享代码时请保留许可证；视频与字幕内容的使用需遵循其各自权利和平台规则。

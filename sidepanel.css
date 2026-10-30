@@ -1631,3 +1631,74 @@ body {
   font-size: 12px;
   color: var(--sage);
 }
+
+/* Local-first input stays available in welcome, loading, error and result views. */
+.local-entry { padding: 14px 18px; border-bottom: 1px solid var(--border); }
+.local-entry label { display: block; font-size: 12px; margin: 10px 0 6px; }
+.local-entry input:not([type=file]), .local-entry textarea { box-sizing: border-box; width: 100%; padding: 9px; border: 1px solid var(--border); border-radius: 7px; color: var(--text); background: var(--surface); }
+.local-entry button { padding: 8px 10px; margin-top: 8px; cursor: pointer; border: 1px solid var(--border); border-radius: 6px; background: var(--surface); color: var(--text); }
+.local-entry button:disabled { opacity: .5; cursor: wait; }
+.local-actions { display: flex; gap: 8px; }
+.local-entry details { margin-top: 12px; }
+.local-entry summary { cursor: pointer; font-size: 13px; }
+.local-hint { color: var(--text-muted); font-size: 11px; line-height: 1.6; margin-top: 12px; }
+#localStatus { font-size: 12px; line-height: 1.6; }
+.local-history-row { display: flex; gap: 6px; }
+.local-history-row button:first-child { flex: 1; text-align: left; overflow-wrap: anywhere; }
+
+/* Full-page reader: one document, summary first and transcript below. */
+[hidden] { display: none !important; }
+.reader-page { height: auto; min-height: 100vh; display: block; }
+.reader-page > .header, .reader-page > .local-entry, .reader-page > .content { max-width: 1060px; margin: 0 auto; }
+.reader-page > .header { padding: 24px 32px 16px; border-radius: 0 0 16px 16px; }
+.reader-page > .local-entry { padding: 24px 32px; }
+.reader-page > .content { overflow: visible; padding: 28px 32px 80px; }
+.reader-page .header-top .video-title { font-size: 25px; line-height: 1.4; }
+.reader-source { display: block; margin-top: 10px; font-size: 12px; color: var(--accent); overflow-wrap: anywhere; }
+.reader-page #tabsNav { display: none !important; }
+.reader-page .tab-panel[data-panel="overview"], .reader-page .tab-panel[data-panel="transcript"] { display: block; }
+.reader-page .chapter-summary { font-size: 15px; color: var(--text-secondary); line-height: 1.85; }
+.reader-page .section { margin-bottom: 36px; }
+.reader-page .quote-save-note-btn { display: none; }
+.reader-page .follow-playback-btn { display: none !important; }
+.reader-page .local-hint { max-width: 780px; }
+.reader-page .transcript-entry { line-height: 1.9; }
+@media (max-width: 620px) {
+  .reader-page > .header, .reader-page > .local-entry, .reader-page > .content { padding-left: 18px; padding-right: 18px; }
+  .reader-page .header-top .video-title { font-size: 20px; }
+}
+
+/* Preserve task steps and labeled evidence in detailed extraction output. */
+.reader-page .chapter-summary { white-space: pre-line; display: block; margin-top: 10px; }
+.reader-page .chapter-title { font-size: 17px; }
+.reader-page .chapter-item { align-items: flex-start; padding: 20px; }
+.reader-page .summary-actions { flex-wrap: wrap; }
+
+.analysis-guide { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 22px 26px; }
+.analysis-guide h3 { font-size: 15px; color: var(--accent); margin: 18px 0 8px; }
+.analysis-guide h3:first-child { margin-top: 0; }
+.analysis-guide p, .analysis-guide li { line-height: 1.9; font-size: 15px; }
+.analysis-guide ul { padding-left: 22px; }
+.analysis-guide li + li { margin-top: 7px; }
+.analysis-guide ol { padding-left: 24px; }
+
+/* Discussion remains a separate editing surface; a reply never overwrites notes. */
+.video-discussion { margin: 20px auto; padding: 24px; max-width: 1060px; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; }
+.video-discussion h2 { font-size: 19px; margin-bottom: 12px; }
+.discussion-hint, #discussionStatus { font-size: 12px; color: var(--text-secondary); line-height: 1.7; }
+#discussionMessages { max-height: 46vh; overflow-y: auto; margin: 18px 0; }
+.discussion-message { margin: 12px 0; padding: 12px; border-radius: 10px; background: var(--surface-raised); }
+.discussion-message.user { background: var(--accent-dim); }
+.discussion-message > div { white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.85; margin-top: 6px; }
+#discussionInput { width: 100%; padding: 12px; border: 1px solid var(--border-heavy); border-radius: 8px; font: inherit; resize: vertical; }
+.video-discussion button { border: 1px solid var(--border-heavy); border-radius: 7px; padding: 8px 12px; background: var(--surface); color: var(--text); cursor: pointer; }
+.video-discussion button:disabled { opacity: .5; cursor: wait; }
+.discussion-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
+#discussionSend, #discussionApply { background: var(--accent); color: white; border-color: var(--accent); }
+#discussionPreview { white-space: pre-wrap; overflow-wrap: anywhere; font: 13px/1.85 var(--font-body); max-height: 45vh; overflow: auto; padding: 12px; border: 1px solid var(--border); }
+.video-discussion .discussion-citation { padding: 0 4px; color: var(--accent); }
+@media (min-width: 1200px) {
+ .reader-page { padding-right: 440px; }
+ .reader-page > .video-discussion { position: fixed; top: 16px; right: 16px; bottom: 16px; width: 410px; margin: 0; overflow-y: auto; }
+ .reader-page > .header, .reader-page > .content, .reader-page > .local-entry { max-width: 1000px; }
+}

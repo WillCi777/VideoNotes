@@ -9,15 +9,17 @@
 
 document.addEventListener("DOMContentLoaded", async () => {
   setupEventListeners();
-  await initChat();
+  setupLocalDigest();
+  setupVideoDiscussion();
   await evictOldCacheEntries(20);
+  if (await restoreLocalLocation()) return;
 
   const configStatus = await chrome.runtime.sendMessage({
     action: "checkConfig",
   });
 
-  if (!configStatus.hasSupadataKey || !configStatus.hasAiKey) {
-    showConfigError(configStatus);
+  if (!configStatus.hasAiKey) {
+    showConfigError({ ...configStatus, hasSupadataKey: true });
     return;
   }
 
@@ -31,7 +33,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     // seen this video before (no API calls); fetched fresh otherwise.
     // (This used to force-clear the cache on every click, which silently
     // burned a transcript credit + analysis tokens per click.)
-    checkCurrentTab();
+    checkCurrentTab().then(openLocalLink);
     sendResponse({ success: true });
   }
   if (message.action === "transcriptProgress") {
@@ -84,7 +86,8 @@ function setupEventListeners() {
       return;
     }
     if (currentVideoId) {
-      startDigest(currentVideoId, currentVideoUrl);
+      if (currentVideoUrl) openLocalLink();
+      else importLocalText();
     }
   });
 
@@ -157,7 +160,7 @@ function setNotesFilter(showAll) {
 // TAB SWITCHING
 // ============================================================
 
-function switchTab(tabName) {
+function switchTab(tabName, skipAnalysis = false) {
   document.querySelectorAll(".tab").forEach((tab) => {
     tab.classList.toggle("active", tab.dataset.tab === tabName);
   });
@@ -174,7 +177,7 @@ function switchTab(tabName) {
   }
 
   // Lazy-load LLM analysis when user switches to Overview tab
-  if (tabName === "overview" && !currentAnalysis && !isAnalysisLoading) {
+  if (!skipAnalysis && tabName === "overview" && !currentAnalysis && !isAnalysisLoading) {
     triggerAnalysis();
   }
 }

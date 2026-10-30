@@ -135,11 +135,12 @@ async function startDigest(videoId, videoUrl) {
  * Triggers the LLM analysis (lazy-loaded when user clicks Overview or Quotes tab).
  * This saves tokens by not running analysis until needed.
  */
-async function triggerAnalysis() {
-  if (!currentTranscriptTimestamped || isAnalysisLoading || currentAnalysis)
+async function triggerAnalysis(force = false) {
+  if (!currentTranscriptTimestamped || isAnalysisLoading || (currentAnalysis && !force))
     return;
 
   isAnalysisLoading = true;
+  const analysisGeneration = localGeneration;
 
   // Show loading indicators in the Overview tab
   const chapterList = document.getElementById("chapterList");
@@ -162,23 +163,36 @@ async function triggerAnalysis() {
       videoDuration: currentVideoDuration,
     });
 
+    if (analysisGeneration !== localGeneration) return;
     if (!analysisResult.success) {
       if (chapterList)
         chapterList.innerHTML = `<li class="chapter-item" style="color: var(--accent); border: none;">Analysis failed: ${escapeHtml(analysisResult.error || "Unknown error")}</li>`;
+      if (currentAnalysis) renderAnalysisResults(currentAnalysis);
+      localStatus(`总结未更新：${analysisResult.message || analysisResult.error || "请检查 AI 设置"}。原结果已保留。`);
       isAnalysisLoading = false;
       return;
     }
 
+    currentDiscussion.draft = null;
+    currentDiscussion.previous = null;
+    renderVideoDiscussion();
     currentAnalysis = analysisResult.analysis;
+    if (!localTimed) {
+      for (const item of [...(currentAnalysis.chapters || []), ...(currentAnalysis.keyQuotes || [])]) { item.timestamp = ""; item.timestampSeconds = 0; }
+    }
     renderAnalysisResults(currentAnalysis);
     highlightMomentsOnPage(currentAnalysis.keyMoments);
 
     // Save to cache now that we have analysis
-    await saveToCache(currentVideoId);
+    const saved = await saveToCache(currentVideoId);
+    localStatus(saved ? "详细笔记已在下方展开，并保存到本机。" : "详细笔记已生成，但本地保存失败，请立即导出。");
   } catch (error) {
+    if (analysisGeneration !== localGeneration) return;
     console.error("[YouTube Digest Panel] Analysis error:", error);
     if (chapterList)
       chapterList.innerHTML = `<li class="chapter-item" style="color: var(--accent); border: none;">Error: ${escapeHtml(error.message)}</li>`;
+    if (currentAnalysis) renderAnalysisResults(currentAnalysis);
+    localStatus(`总结未更新：${error.message}。原结果已保留。`);
   }
 
   isAnalysisLoading = false;

@@ -3,10 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>YouTube Digest</title>
+    <title>视频总结 · 本地阅读</title>
     <link rel="stylesheet" href="sidepanel.css" />
   </head>
-  <body>
+  <body class="reader-page">
     <!-- HEADER -->
     <!-- Note: the panel's own "YouTube Digest" title is shown by Chrome's side-panel
          title bar, so we don't repeat a logo here. -->
@@ -16,6 +16,7 @@
         <div class="video-info" id="videoInfo" style="display: none">
           <div class="video-title" id="videoTitle"></div>
           <div class="video-channel" id="videoChannel"></div>
+          <a id="readerSource" class="reader-source" target="_blank" rel="noopener noreferrer" hidden></a>
         </div>
         <button
           class="settings-btn"
@@ -30,22 +31,37 @@
 
       <!-- Tab navigation -->
       <div class="tabs" id="tabsNav" style="display: none">
-        <button class="tab active" data-tab="transcript">Transcript</button>
-        <button class="tab" data-tab="overview">Overview</button>
-        <button class="tab" data-tab="notes">Notes</button>
-        <button class="tab" data-tab="chat">Chat</button>
+        <button class="tab active" data-tab="transcript">文字稿</button>
+        <button class="tab" data-tab="overview">总结</button>
+        <button hidden class="tab" data-tab="notes">笔记</button>
+        <button hidden class="tab" data-tab="chat">问答</button>
       </div>
     </div>
 
+    <section class="local-entry" aria-label="本地视频总结">
+      <form id="localLinkForm">
+        <label for="localVideoUrl">视频链接</label>
+        <input id="localVideoUrl" type="url" placeholder="粘贴 B站或 YouTube 完整视频链接" required />
+        <div class="local-actions"><button type="submit">生成总结</button><button id="localCurrentTab" type="button">读取当前页面</button></div>
+      </form>
+      <details><summary>没有字幕？导入文件或粘贴文字</summary>
+        <label for="localTitle">资料标题</label><input id="localTitle" maxlength="200" placeholder="可选，默认使用文件名" />
+        <label for="localFile">字幕文件（SRT / VTT / TXT，最大 1 MiB）</label><input id="localFile" type="file" accept=".srt,.vtt,.txt" />
+        <label for="localText">或粘贴字幕 / 文字（最多 30 万字符）</label><textarea id="localText" rows="4" maxlength="300000"></textarea>
+        <button id="localImport" type="button">导入并总结</button>
+      </details>
+      <p class="local-hint">记录保存在本机；点击生成会把文字稿发送给设置中选中的 AI 服务。B站需有可获取字幕，暂不支持音频转写。</p>
+      <p id="localStatus" role="status" aria-live="polite"></p>
+      <details><summary>本地历史（最近 20 条，30 天）</summary><div id="localHistory"></div><button id="localClearHistory" type="button">清空历史</button></details>
+    </section>
     <!-- MAIN CONTENT -->
     <div class="content" id="contentArea">
       <!-- WELCOME STATE -->
       <div id="welcomeState" class="welcome-container">
         <div class="welcome-icon">&#9655;</div>
-        <div class="welcome-title">Ready to Digest</div>
+        <div class="welcome-title">开始整理视频</div>
         <div class="welcome-desc">
-          Navigate to a YouTube video and click the extension icon to get an
-          AI-powered digest.
+          粘贴视频链接生成总结，或导入字幕开始。首次使用请在 Settings 中配置 AI 密钥。
         </div>
       </div>
 
@@ -74,13 +90,73 @@
 
       <!-- RESULTS -->
       <div id="resultsState" style="display: none">
+        <!-- TAB: Overview (chapters + key quotes) - requires LLM -->
+        <div class="tab-panel" data-panel="overview">
+          <!-- Chapters -->
+          <div class="section">
+            <div class="section-header">
+              <div class="section-title">主题详解与操作细节</div>
+              <div class="summary-actions">
+                <button class="enhance-btn" id="regenerateAnalysisBtn" type="button">重新提取细节</button>
+                <button
+                  class="enhance-btn"
+                  id="exportMarkdownBtn"
+                  type="button"
+                  title="Export this digest as a Markdown summary"
+                >
+                  📄 Markdown
+                </button>
+                <button
+                  class="enhance-btn"
+                  id="mindmapBtn"
+                  type="button"
+                  title="View the chapters as a mindmap"
+                >
+                  🧭 思维导图
+                </button>
+              </div>
+            </div>
+            <ul class="chapter-list" id="chapterList">
+              <li
+                class="chapter-item"
+                style="
+                  color: var(--text-muted);
+                  cursor: default;
+                  border-color: var(--border);
+                "
+              >
+                Chapters will appear here
+              </li>
+            </ul>
+          </div>
+
+          <!-- Key Quotes -->
+          <div class="section">
+            <div class="section-title">重点摘录</div>
+            <div id="quotesList">
+              <div
+                class="quote-item"
+                style="
+                  color: var(--text-muted);
+                  border-left-color: var(--border);
+                  cursor: default;
+                "
+              >
+                <div class="quote-text" style="font-style: normal">
+                  Quotes will be extracted when you view this tab...
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- TAB: Transcript (default - no LLM required) -->
         <div class="tab-panel active" data-panel="transcript">
           <div class="section">
             <div class="section-header transcript-section-header">
               <div class="transcript-header-main">
                 <div class="section-title-wrap">
-                  <div class="section-title">Full Transcript</div>
+                  <div class="section-title">完整文字稿</div>
                 </div>
                 <div
                   class="transcript-mode-control"
@@ -124,67 +200,8 @@
           </div>
         </div>
 
-        <!-- TAB: Overview (chapters + key quotes) - requires LLM -->
-        <div class="tab-panel" data-panel="overview">
-          <!-- Chapters -->
-          <div class="section">
-            <div class="section-header">
-              <div class="section-title">Chapters</div>
-              <div class="summary-actions">
-                <button
-                  class="enhance-btn"
-                  id="exportMarkdownBtn"
-                  type="button"
-                  title="Export this digest as a Markdown summary"
-                >
-                  📄 Markdown
-                </button>
-                <button
-                  class="enhance-btn"
-                  id="mindmapBtn"
-                  type="button"
-                  title="View the chapters as a mindmap"
-                >
-                  🧭 思维导图
-                </button>
-              </div>
-            </div>
-            <ul class="chapter-list" id="chapterList">
-              <li
-                class="chapter-item"
-                style="
-                  color: var(--text-muted);
-                  cursor: default;
-                  border-color: var(--border);
-                "
-              >
-                Chapters will appear here
-              </li>
-            </ul>
-          </div>
-
-          <!-- Key Quotes -->
-          <div class="section">
-            <div class="section-title">Key Quotes</div>
-            <div id="quotesList">
-              <div
-                class="quote-item"
-                style="
-                  color: var(--text-muted);
-                  border-left-color: var(--border);
-                  cursor: default;
-                "
-              >
-                <div class="quote-text" style="font-style: normal">
-                  Quotes will be extracted when you view this tab...
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
         <!-- TAB: Notes -->
-        <div class="tab-panel" data-panel="notes">
+        <div hidden class="tab-panel" data-panel="notes">
           <div class="section">
             <div class="section-header">
               <div class="section-title">Saved Notes</div>
@@ -215,7 +232,7 @@
         </div>
 
         <!-- TAB: Chat (conversations with the active AI provider) -->
-        <div class="tab-panel" data-panel="chat">
+        <div hidden class="tab-panel" data-panel="chat">
           <div class="section chat-section">
             <div class="chat-layout">
               <div class="chat-sidebar">
@@ -247,6 +264,23 @@
       </div>
     </div>
 
+    <aside id="videoDiscussion" class="video-discussion" aria-label="讨论与完善">
+      <h2>讨论与完善</h2>
+      <p class="discussion-hint">结合本视频字幕与当前笔记回答。对话保存在本机；发送及生成修订稿会调用所选 AI 服务。</p>
+      <div id="discussionMessages" aria-live="polite"></div>
+      <form id="discussionForm">
+        <label for="discussionInput">问题或修改要求</label>
+        <textarea id="discussionInput" rows="4" maxlength="4000" placeholder="例如：把操作流程展开，说明字幕依据。"></textarea>
+        <div class="discussion-actions"><button id="discussionSend" type="submit">发送</button><button id="discussionRevise" type="button">生成修订稿</button></div>
+      </form>
+      <p id="discussionStatus" role="status"></p>
+      <section id="discussionDraft" hidden>
+        <h3>修订稿预览 · 尚未应用</h3>
+        <pre id="discussionPreview"></pre>
+        <div class="discussion-actions"><button id="discussionApply" type="button">应用到笔记</button><button id="discussionDiscard" type="button">放弃修订稿</button></div>
+      </section>
+      <button id="discussionUndo" type="button" hidden>恢复上一版笔记</button>
+    </aside>
     <!-- Auto-scroll follow button — appears when user scrolls away from playback position -->
     <button
       class="follow-playback-btn"
@@ -260,6 +294,7 @@
     <script src="settings.js"></script>
     <script src="src/core/debug.js"></script>
     <script src="src/core/urls.js"></script>
+    <script src="src/core/local-video.js"></script>
     <script src="src/core/transcript.js"></script>
     <script src="src/core/markup.js"></script>
     <script src="src/core/translation-validation.js"></script>
@@ -279,6 +314,8 @@
     <script src="src/panel/digest.js"></script>
     <script src="src/panel/chat.js"></script>
     <script src="src/panel/summary.js"></script>
+    <script src="src/panel/discussion.js"></script>
+    <script src="src/panel/local.js"></script>
     <script src="src/panel/main.js"></script>
     <script src="sidepanel.js"></script>
   </body>

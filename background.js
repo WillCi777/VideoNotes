@@ -23,6 +23,9 @@
 
   var ytdBackgroundModules = [
     "settings.js",
+    "src/core/local-video.js",
+    "src/core/wbi.js",
+    "src/core/discussion.js",
     "src/core/debug.js",
     "src/core/json.js",
     "src/core/timestamps.js",
@@ -32,8 +35,10 @@
     "src/platform/sidepanel.js",
     "src/services/prompts.js",
     "src/services/supadata.js",
+    "src/services/bilibili.js",
     "src/services/ai-client.js",
     "src/services/ai-tasks.js",
+    "src/services/discussion.js",
     "src/background/panel-scope.js",
     "src/background/notes.js",
     "src/background/video-info.js",
@@ -45,6 +50,9 @@
     // Chrome / Edge MV3 service worker path.
     importScripts(
       "settings.js",
+    "src/core/local-video.js",
+    "src/core/wbi.js",
+    "src/core/discussion.js",
       "src/core/debug.js",
       "src/core/json.js",
       "src/core/timestamps.js",
@@ -54,8 +62,10 @@
       "src/platform/sidepanel.js",
       "src/services/prompts.js",
       "src/services/supadata.js",
+    "src/services/bilibili.js",
       "src/services/ai-client.js",
       "src/services/ai-tasks.js",
+    "src/services/discussion.js",
       "src/background/panel-scope.js",
       "src/background/notes.js",
       "src/background/video-info.js",

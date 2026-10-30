@@ -56,18 +56,10 @@ function stopPlaybackTracking() {
  */
 async function playbackTrackingTick() {
   try {
-    const result = await chrome.runtime.sendMessage({
-      action: "relayToContent",
-      payload: { action: "getCurrentTime" },
-    });
-
-    if (!result.success || !result.response) return;
-
-    const currentTime = result.response.currentTime || 0;
-    highlightActiveEntry(currentTime);
-  } catch (error) {
-    // Silently ignore — YouTube tab might be closed or navigated away
-  }
+    if (!localTimed || !currentVideoUrl) return;
+    const result = await localPlayback();
+    if (result) highlightActiveEntry(result.currentTime || 0);
+  } catch { /* Player can navigate or close during tracking. */ }
 }
 
 /**

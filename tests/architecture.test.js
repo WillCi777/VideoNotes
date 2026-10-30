@@ -12,6 +12,9 @@ const read = (file) => fs.readFileSync(path.join(root, file), "utf8");
 const CONTEXTS = {
   background: [
     "settings.js",
+    "src/core/local-video.js",
+    "src/core/wbi.js",
+    "src/core/discussion.js",
     "src/core/debug.js",
     "src/core/json.js",
     "src/core/timestamps.js",
@@ -21,8 +24,10 @@ const CONTEXTS = {
     "src/platform/sidepanel.js",
     "src/services/prompts.js",
     "src/services/supadata.js",
+    "src/services/bilibili.js",
     "src/services/ai-client.js",
     "src/services/ai-tasks.js",
+    "src/services/discussion.js",
     "src/background/panel-scope.js",
     "src/background/notes.js",
     "src/background/video-info.js",
@@ -41,6 +46,7 @@ const CONTEXTS = {
     "settings.js",
     "src/core/debug.js",
     "src/core/urls.js",
+    "src/core/local-video.js",
     "src/core/transcript.js",
     "src/core/markup.js",
     "src/core/translation-validation.js",
@@ -60,6 +66,8 @@ const CONTEXTS = {
     "src/panel/digest.js",
     "src/panel/chat.js",
     "src/panel/summary.js",
+    "src/panel/discussion.js",
+    "src/panel/local.js",
     "src/panel/main.js",
     "sidepanel.js",
   ],
@@ -161,7 +169,7 @@ test("Safari manifest drops Chrome-only keys and uses a scripts background", () 
   const safari = JSON.parse(read("manifest.safari.json"));
   assert.equal(safari.manifest_version, 3);
   assert.equal(safari.name, "YouTube Digest");
-  assert.equal(safari.version, "1.1.5");
+  assert.equal(safari.version, "2.0.0");
   assert.ok(Array.isArray(safari.background?.scripts));
   assert.equal(Object.hasOwn(safari, "side_panel"), false);
   assert.equal(Object.hasOwn(safari, "minimum_chrome_version"), false);

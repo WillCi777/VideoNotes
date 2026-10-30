@@ -51,7 +51,10 @@ async function saveQuoteAsNote(quote, btn) {
 
   try {
     const result = await chrome.runtime.sendMessage({
-      action: "saveNote",
+      action: "localSaveQuote",
+      url: currentVideoUrl || "",
+      text: quote.quote,
+      timed: localTimed,
       videoId: currentVideoId,
       timestamp: quote.timestampSeconds,
       videoTitle: currentVideoTitle,
@@ -96,6 +99,8 @@ function playNote(note) {
     seekTo(note.timestampSeconds);
   } else {
     // note.timestampedUrl already includes the &t=<seconds>s anchor
-    chrome.tabs.create({ url: note.timestampedUrl });
+    if (note.timestampedUrl) {
+      try { LocalVideo.parse(note.timestampedUrl); chrome.tabs.create({ url: note.timestampedUrl }); } catch { localStatus("笔记没有有效视频链接。"); }
+    } else localStatus("导入资料没有关联视频链接。");
   }
 }
