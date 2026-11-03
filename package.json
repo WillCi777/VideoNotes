@@ -1,6 +1,6 @@
 {
-  "name": "youtube-digest",
-  "version": "2.0.0",
+  "name": "videonotes",
+  "version": "2.1.0",
   "private": true,
   "description": "Local Chrome reader for Bilibili and YouTube subtitles, topic-led notes, and grounded AI discussion with reviewable revisions.",
   "license": "MIT",

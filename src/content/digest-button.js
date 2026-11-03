@@ -3,7 +3,7 @@
  *
  * Injects a "Digest" button into YouTube's action bar (next to Share, Save,
  * etc. below the video). Clicking it asks the background to open the
- * YouTube Digest side panel.
+ * VideoNotes side panel.
  *
  * YouTube is an SPA and keeps hidden copies of its responsive toolbar in the
  * DOM, so this module reconciles the button against the VISIBLE action row:
@@ -68,7 +68,7 @@ function createDigestButton() {
   const digestButton = document.createElement("button");
   digestButton.id = "ytd-digest-button";
   digestButton.type = "button";
-  digestButton.setAttribute("aria-label", "Open YouTube Digest");
+  digestButton.setAttribute("aria-label", "Open VideoNotes");
   digestButton.innerHTML = `
     <span class="ytd-digest-icon" style="font-size: 11px;">▶</span>
     <span class="ytd-digest-label">Digest</span>
@@ -117,16 +117,16 @@ function createDigestButton() {
     e.preventDefault();
     e.stopPropagation();
 
-    debugLog("[YouTube Digest] Digest button clicked");
+    debugLog("[VideoNotes] Digest button clicked");
 
     // Send message to background script to open side panel
     try {
       const result = await chrome.runtime.sendMessage({
         action: "openSidePanel",
       });
-      debugLog("[YouTube Digest] openSidePanel response:", result);
+      debugLog("[VideoNotes] openSidePanel response:", result);
     } catch (err) {
-      console.error("[YouTube Digest] Failed to open side panel:", err);
+      console.error("[VideoNotes] Failed to open side panel:", err);
     }
   });
 
@@ -152,7 +152,7 @@ function injectDigestButton() {
 
   const actionsContainer = findDigestButtonHost();
   if (!actionsContainer) {
-    debugLog("[YouTube Digest Content] Visible actions container not found yet");
+    debugLog("[VideoNotes Content] Visible actions container not found yet");
     return false;
   }
 
@@ -178,7 +178,7 @@ function injectDigestButton() {
     actionsContainer.insertBefore(digestButton, actionsContainer.firstChild);
   }
 
-  debugLog("[YouTube Digest Content] Digest button reconciled");
+  debugLog("[VideoNotes Content] Digest button reconciled");
   return true;
 }
 

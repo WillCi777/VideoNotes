@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.1.0 - 2026-11-03
+
+- Rebrand the maintained tool as VideoNotes（视频笔记）.
+- Update extension display name, settings, generated document attribution, README and package assets.
+- Preserve existing browser storage identifiers and original MIT attribution for upgrade compatibility.
+
+
 ## 2.0.0 - 2026-10-30
 
 First shareable local-enhancement release, based on upstream 1.1.5.

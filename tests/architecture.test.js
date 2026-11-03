@@ -168,8 +168,8 @@ test("no context redeclares a top-level let or const binding", () => {
 test("Safari manifest drops Chrome-only keys and uses a scripts background", () => {
   const safari = JSON.parse(read("manifest.safari.json"));
   assert.equal(safari.manifest_version, 3);
-  assert.equal(safari.name, "YouTube Digest");
-  assert.equal(safari.version, "2.0.0");
+  assert.equal(safari.name, "VideoNotes");
+  assert.equal(safari.version, "2.1.0");
   assert.ok(Array.isArray(safari.background?.scripts));
   assert.equal(Object.hasOwn(safari, "side_panel"), false);
   assert.equal(Object.hasOwn(safari, "minimum_chrome_version"), false);

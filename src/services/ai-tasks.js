@@ -34,7 +34,7 @@ async function handleAnalyzeTranscript(
       return {
         success: false,
         error: "NO_AI_KEY",
-        message: "DeepSeek API key not configured. Open YouTube Digest Settings.",
+        message: "DeepSeek API key not configured. Open VideoNotes Settings.",
       };
     }
 
@@ -88,7 +88,7 @@ async function handleAnalyzeTranscript(
       promptVariables,
     );
 
-    debugLog("[YouTube Digest] Requesting video analysis", settings.aiModel);
+    debugLog("[VideoNotes] Requesting video analysis", settings.aiModel);
     const { text: responseText } = await requestAiCompletion({
       maxTokens: 8192,
       responseFormat: { type: "json_object" },
@@ -155,7 +155,7 @@ async function cleanupNoteText(
   }
 
   try {
-    debugLog("[YouTube Digest] Requesting note cleanup");
+    debugLog("[VideoNotes] Requesting note cleanup");
     const variables = {
       videoTitle: videoTitle || "Unknown",
       fullContext,
@@ -192,7 +192,7 @@ async function cleanupNoteText(
       }
     } catch (parseError) {
       console.warn(
-        "[YouTube Digest] JSON parse failed for note, stripping preambles:",
+        "[VideoNotes] JSON parse failed for note, stripping preambles:",
         parseError,
       );
       result = result.replace(
@@ -210,7 +210,7 @@ async function cleanupNoteText(
 
     return result.slice(0, 3000);
   } catch (e) {
-    console.error("[YouTube Digest] Cleanup error:", e);
+    console.error("[VideoNotes] Cleanup error:", e);
   }
 
   // Return combined raw text if cleanup fails
@@ -261,7 +261,7 @@ async function handleExplainSelection(
       variables,
     );
 
-    debugLog("[YouTube Digest] Requesting selection explanation");
+    debugLog("[VideoNotes] Requesting selection explanation");
     const { text: explanation } = await requestAiCompletion({
       maxTokens: 1024,
       messages: [
@@ -387,7 +387,7 @@ async function handleTranslateContent(
     }
     return { success: true, translatedContent: aligned };
   } catch (error) {
-    console.error("[YouTube Digest] Translation error:", error);
+    console.error("[VideoNotes] Translation error:", error);
     return { success: false, error: error.message || "Translation failed" };
   }
 }
@@ -450,7 +450,7 @@ async function handleChatMessage(messages, videoContext = {}) {
       return {
         success: false,
         error: "NO_AI_KEY",
-        message: `${info.name} API key not configured. Open YouTube Digest Settings.`,
+        message: `${info.name} API key not configured. Open VideoNotes Settings.`,
       };
     }
 
@@ -470,7 +470,7 @@ async function handleChatMessage(messages, videoContext = {}) {
 
     return { success: true, reply: reply.trim() };
   } catch (error) {
-    console.error("[YouTube Digest] Chat error:", error);
+    console.error("[VideoNotes] Chat error:", error);
     return {
       success: false,
       error: error.message || "Chat request failed",

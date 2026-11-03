@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
-  "name": "YouTube Digest",
-  "version": "2.0.0",
+  "name": "VideoNotes",
+  "version": "2.1.0",
   "description": "本地视频学习助手：粘贴 B站或 YouTube 链接，导入字幕，生成 AI 总结与时间戳章节。",
   "permissions": [
     "storage",
@@ -20,7 +20,7 @@
     "https://i0.hdslb.com/*"
   ],
   "action": {
-    "default_title": "Open YouTube Digest",
+    "default_title": "打开 VideoNotes 视频笔记",
     "default_icon": {
       "16": "icons/icon16.png",
       "48": "icons/icon48.png",

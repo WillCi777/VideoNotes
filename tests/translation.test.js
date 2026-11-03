@@ -745,7 +745,7 @@ test("chat message handler wires the study-assistant prompt and returns the repl
   assert.equal(result.reply, "A clear answer.");
   assert.equal(requests.length, 1);
   assert.equal(requests[0].messages[0].role, "system");
-  assert.match(requests[0].messages[0].content, /YouTube Digest AI study assistant/);
+  assert.match(requests[0].messages[0].content, /VideoNotes AI study assistant/);
   assert.match(requests[0].messages[0].content, /Test Video/);
   assert.equal(requests[0].messages.length, 4); // system + 3 history
 });

@@ -1,10 +1,12 @@
-# YouTube Digest 本地增强版
+# VideoNotes 视频笔记
 
 在电脑上把 B站或 YouTube 视频变成可阅读、可追问、可修订的学习笔记。
 
-这是基于 YouTube Digest 的本地 Chrome 扩展增强版。点击扩展打开完整阅读页，粘贴链接或导入字幕，生成紧扣主题的笔记；右侧可以结合字幕继续讨论，预览并应用修订稿。
+由 WillCi777 维护的桌面视频学习工具。点击扩展打开完整阅读页，粘贴链接或导入字幕，生成紧扣主题的笔记；右侧可以结合字幕继续讨论，预览并应用修订稿。
 
 [English](README.en.md) · [完整使用说明](LOCAL-README.md) · [隐私与数据流](PRIVACY.md) · [更新记录](CHANGELOG.md)
+
+[项目仓库](https://github.com/WillCi777/VideoNotes) · [下载最新版](https://github.com/WillCi777/VideoNotes/releases/latest)
 
 ## 功能
 
@@ -19,7 +21,7 @@
 
 需要桌面版 Chrome 116 或更新版本。当前通过“加载已解压的扩展程序”安装，尚未上架 Chrome 应用商店。
 
-1. 在本仓库的 **Releases** 页面下载 `youtube-digest-v2.0.0.zip`（发布后可用），解压到准备长期保留的文件夹。也可点击 **Code → Download ZIP** 下载源码并解压。
+1. 在本仓库的 **Releases** 页面下载 `videonotes-v2.1.0.zip`，解压到准备长期保留的文件夹。也可点击 **Code → Download ZIP** 下载源码并解压。
 2. 打开 `chrome://extensions`，开启右上角“开发者模式”。
 3. 点击“加载已解压的扩展程序”，选择包含 `manifest.json` 的文件夹。不要选择 `src` 或 `dist`。
 4. 点击扩展图标打开阅读页，再点击 **Settings**，选择 AI 服务、填写自己的 API Key 并保存。
@@ -90,6 +92,6 @@ npm run package
 
 ## 来源与许可
 
-基于 [WillCi777/youtube-digest-Next](https://github.com/WillCi777/youtube-digest-Next)，上游 README 同时引用 [bty2403/youtube-digest-Next](https://github.com/bty2403/youtube-digest-Next)。本版保留上游 Git 来源及 MIT 版权声明，新增 B站适配、本地阅读、详细提取与视频专属讨论修订。
+由 [WillCi777](https://github.com/WillCi777) 维护。当前工具基于 [YouTube Digest](https://github.com/bty2403/youtube-digest-Next) 持续开发，保留原始 MIT 版权声明和 Git 提交来源；新增 B站适配、本地阅读、详细提取与视频专属讨论修订。
 
 采用 [MIT License](LICENSE)。本项目非 B站、YouTube 或各模型服务商的官方产品。分享代码时请保留许可证；视频与字幕内容的使用需遵循其各自权利和平台规则。

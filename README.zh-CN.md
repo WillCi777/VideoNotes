@@ -1,4 +1,4 @@
-# YouTube Digest 本地增强版
+# VideoNotes 视频笔记
 
 中文主说明已整合到 [README.md](README.md)，包含安装、密钥配置、视频讨论与修订、隐私和常见问题。
 

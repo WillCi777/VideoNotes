@@ -24,7 +24,7 @@ async function loadChatsFromStorage() {
       ? result[CHATS_STORAGE_KEY]
       : [];
   } catch (error) {
-    console.error("[YouTube Digest] Load chats error:", error);
+    console.error("[VideoNotes] Load chats error:", error);
     return [];
   }
 }
@@ -35,7 +35,7 @@ async function saveChatsToStorage() {
       [CHATS_STORAGE_KEY]: deepCopyChats(capChats(chatList)),
     });
   } catch (error) {
-    console.error("[YouTube Digest] Save chats error:", error);
+    console.error("[VideoNotes] Save chats error:", error);
   }
 }
 

@@ -21,7 +21,7 @@ function ytdRestrictStorageAccess() {
     api.storage.local
       .setAccessLevel({ accessLevel: "TRUSTED_CONTEXTS" })
       .catch((error) =>
-        console.warn("[YouTube Digest] Could not restrict storage access:", error),
+        console.warn("[VideoNotes] Could not restrict storage access:", error),
       );
   }
 }

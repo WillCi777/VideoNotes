@@ -1,4 +1,4 @@
-# YouTube Digest Local
+# VideoNotes
 
 A desktop Chrome extension that turns Bilibili and YouTube subtitles into topic-led study notes, with a local reading page and a video-specific discussion/revision panel.
 
@@ -49,4 +49,4 @@ The allowlisted extension ZIP is created under `dist/`. Optional browser smoke t
 
 ## Credits
 
-Derived from [WillCi777/youtube-digest-Next](https://github.com/WillCi777/youtube-digest-Next), whose upstream documentation also references [bty2403/youtube-digest-Next](https://github.com/bty2403/youtube-digest-Next). Original MIT copyright notices are retained. See [LICENSE](LICENSE). This is not an official product of the video platforms or AI providers.
+Maintained by [WillCi777](https://github.com/WillCi777). Based on [YouTube Digest](https://github.com/bty2403/youtube-digest-Next), with original MIT copyright notices and Git commit attribution retained. See [LICENSE](LICENSE). This is not an official product of the video platforms or AI providers.

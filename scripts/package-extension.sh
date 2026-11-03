@@ -31,7 +31,7 @@ fi
 mkdir -p "$dist_dir"
 temporary_dir="$(mktemp -d "$dist_dir/.youtube-digest-package.XXXXXX")"
 temporary_zip="$temporary_dir/youtube-digest.zip"
-output_zip="$dist_dir/youtube-digest-v$version.zip"
+output_zip="$dist_dir/videonotes-v$version.zip"
 
 cleanup() {
   if [[ -f "$temporary_zip" ]]; then

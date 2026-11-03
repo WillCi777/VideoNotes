@@ -96,7 +96,7 @@ async function startDigest(videoId, videoUrl) {
     if (transcriptResult.error === "NO_SUPADATA_KEY") {
       showError(
         "API key missing",
-        "Add your Supadata API key in YouTube Digest Settings.",
+        "Add your Supadata API key in VideoNotes Settings.",
       );
       return;
     }
@@ -188,7 +188,7 @@ async function triggerAnalysis(force = false) {
     localStatus(saved ? "详细笔记已在下方展开，并保存到本机。" : "详细笔记已生成，但本地保存失败，请立即导出。");
   } catch (error) {
     if (analysisGeneration !== localGeneration) return;
-    console.error("[YouTube Digest Panel] Analysis error:", error);
+    console.error("[VideoNotes Panel] Analysis error:", error);
     if (chapterList)
       chapterList.innerHTML = `<li class="chapter-item" style="color: var(--accent); border: none;">Error: ${escapeHtml(error.message)}</li>`;
     if (currentAnalysis) renderAnalysisResults(currentAnalysis);

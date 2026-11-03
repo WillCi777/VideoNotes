@@ -55,7 +55,7 @@ async function getPlayerVideoDetails(tabId) {
     });
     return results?.[0]?.result || null;
   } catch (e) {
-    console.warn("[YouTube Digest BG] Player details unavailable:", e.message);
+    console.warn("[VideoNotes BG] Player details unavailable:", e.message);
     return null;
   }
 }

@@ -134,14 +134,14 @@ async function requestAiCompletion({
   const info = providerInfo(settings);
   if (!info.apiKey) {
     const error = new Error(
-      `${info.name} API key not configured. Open YouTube Digest Settings.`,
+      `${info.name} API key not configured. Open VideoNotes Settings.`,
     );
     error.code = "NO_AI_KEY";
     throw error;
   }
   if (info.provider === "custom" && !info.baseUrl) {
     const error = new Error(
-      "Custom provider Base URL not configured. Open YouTube Digest Settings.",
+      "Custom provider Base URL not configured. Open VideoNotes Settings.",
     );
     error.code = "NO_AI_BASE_URL";
     throw error;
